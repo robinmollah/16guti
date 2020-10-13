@@ -6,6 +6,9 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 
+yarn.lock
+package-lock.json
+
 # Vendors
 node_modules/
 
