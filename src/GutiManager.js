@@ -4,12 +4,13 @@ let GutiStyle = {
         color: 0xff0000
     },
     fillStyle: {
-        color: 0x00ff00
+        color: 0xDB7093
     }
 };
+let OFFSET = 100;
 
 class GutiManager {
-    getGutis(){
+    getGutiOrientation(){
         let gutis = new Array(25).fill(-1, 0, 10)
             .fill(0, 10, 15)
             .fill(1, 15, 25);
@@ -17,16 +18,43 @@ class GutiManager {
     }
 
     draw(graphics){
-        graphics = graphics.add.graphics(GutiStyle);
-        for (let guti of this.getGutiShapes()){
-            graphics.fillCircleShape(guti)
+        let own = graphics.add.graphics(GutiStyle);
+        GutiStyle.fillStyle.color = 0x006a4e
+        let opponent = graphics.add.graphics(GutiStyle)
+        opponent.x = OFFSET;
+        opponent.y = OFFSET;
+        own.x = OFFSET;
+        own.y = OFFSET;
+
+        let radius = 8;
+        for (let guti of this.getGutiPositions()){
+            if(guti.isOwn){
+                own.fillCircle(guti.x, guti.y, radius);
+            } else {
+                opponent.fillCircle(guti.x, guti.y, radius);
+            }
         }
     }
 
-    getGutiShapes(){
+    getGutiPositions(offset = 100){
         let gutis = [];
-        for (let guti in this.getGutis()){
-            gutis.push(new Phaser.Geom.Circle(Math.random() * 300, Math.random() * 200, 7))
+        let row = 0;
+        let column = 0;
+        for (let guti of this.getGutiOrientation()){
+            if(guti){
+                gutis.push({
+                    x: column * 100,
+                    y: row * 100,
+                    isOwn: guti == 1
+                });
+            }
+            if((column + 1) % 5 == 0) {
+                console.log("Increasng row")
+                row++;
+                column = 0;
+                continue;
+            }
+            column++;
         }
         return gutis;
     }

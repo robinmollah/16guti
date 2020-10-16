@@ -28,7 +28,7 @@ function create() {
   boardLines = this.add.graphics({
     lineStyle: {
       width: 4,
-      color: 0x00ff00
+      color: 0x444444
     }
   });
   boardLines.x = OFFSET;
@@ -41,7 +41,7 @@ function create() {
   // Draw the gutis
   GutiManager.draw(this);
 
-  console.log(GutiManager.getGutis());
+  console.log(GutiManager.getGutiOrientation());
 }
 
 function update(){
