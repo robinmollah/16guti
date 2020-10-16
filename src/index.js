@@ -1,5 +1,8 @@
 import Phaser from "phaser";
+import GutiManager from "./GutiManager";
 // import logoImg from "./assets/logo.png";
+const LINE_LENGTH = 400;
+const OFFSET = 100;
 
 const config = {
   type: Phaser.AUTO,
@@ -14,26 +17,31 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
-let graphics, lines;
+let boardLines;
 
 function preload() {
   // this.load.image("logo", logoImg);
 }
 
 function create() {
-  graphics = this.add.graphics({
+  // Draw the board
+  boardLines = this.add.graphics({
     lineStyle: {
       width: 4,
       color: 0x00ff00
     }
   });
-  graphics.x = 100;
-  graphics.y = 100;
+  boardLines.x = OFFSET;
+  boardLines.y = OFFSET;
 
-  lines = createLines();
-  for(let line of lines){
-    graphics.strokeLineShape(line);
+  for(let line of getLines()){
+    boardLines.strokeLineShape(line);
   }
+
+  // Draw the gutis
+  GutiManager.draw(this);
+
+  console.log(GutiManager.getGutis());
 }
 
 function update(){
@@ -42,8 +50,7 @@ function update(){
   // graphics.strokeLineShape(line);
 }
 
-function createLines(){
-  const LINE_LENGTH = 400;
+function getLines(){
   let lines = [];
 
   // corner joining lines
