@@ -1,11 +1,18 @@
 import {OFFSET_X, OFFSET_Y} from "./BoardRenderer";
 
-const OWN_GUTI_COLOR = 0x006a4e;
-const OPP_GUTI_COLOR = 0xDB7093;
-const BLANK_GUTI_COLOR = 0x111111;
+const GUTI_VAL = {
+    OWN: 1,
+    OPP: -1,
+    VALID: -2,
+    BLANK: 0,
+}
 
-const OWN_GUTI_VALUE = 1;
-const OPP_GUTI_VALUE = -1;
+const GUTI_COLOR = {
+    OWN: 0x006A4E,
+    OPP: 0xDB7093,
+    BLANK: 0x111111,
+    VALID: 0xCC7A00
+}
 
 const GUTI_RADIUS = 8;
 
@@ -16,9 +23,9 @@ class GutiManager {
      */
     getGutiOrientation(){
         if(!GutiManager.oriented){
-            let gutis = new Array(25).fill(OPP_GUTI_VALUE, 0, 10)
-                .fill(0, 10, 15)
-                .fill(OWN_GUTI_VALUE, 15, 25);
+            let gutis = new Array(25).fill(GUTI_COLOR.OPP, 0, 10)
+                .fill(GUTI_COLOR.BLANK, 10, 15)
+                .fill(GUTI_COLOR.OWN, 15, 25);
             GutiManager.orientation = gutis;
             GutiManager.objects = {...gutis};
             GutiManager.oriented = true;
@@ -29,7 +36,7 @@ class GutiManager {
     moveGuti(source, dest){
         // TODO do the same for gutiObjects
         GutiManager.orientation[dest] = GutiManager.orientation[source];
-        GutiManager.orientation[source] = 0;
+        GutiManager.orientation[source] = GUTI_COLOR.BLANK;
     }
 
     matrix(){
@@ -37,7 +44,6 @@ class GutiManager {
         for(let i = 0; i < 5; i++){
             matrix.push(GutiManager.orientation.slice(5 * i, 5 + (5 * i)));
         }
-        console.log(matrix);
         return matrix;
     }
 
@@ -48,22 +54,15 @@ class GutiManager {
         let i = 0;
         for (let guti of this.getGutiPositions()){
             let circle;
-            if(guti.isOwn){
-                circle = board.add.circle(guti.x, guti.y, radius, OWN_GUTI_COLOR);
-                circle.setInteractive().once('pointerdown', () => {
-                    console.log("Listened", guti.x, guti.y);
-                    GutiManager.update = false;
-                });
-            } else {
-                circle = board.add.circle(guti.x, guti.y, radius, guti.blank ? BLANK_GUTI_COLOR : OPP_GUTI_COLOR);
-                guti.i = i;
-                circle.setInteractive().once('pointerdown', () => {
-                    console.log("Listened", guti.x);
-                    this.moveGuti(guti.i, guti.i + 7);
-                    GutiManager.update = false;
-                    this.matrix();
-                });
-            }
+            circle = board.add.circle(guti.x, guti.y, radius, guti.color);
+            guti.i = i;
+            circle.setInteractive().once('pointerdown', () => {
+                // this.moveGuti(guti.i, guti.color === GUTI_COLOR.OWN ? guti.i - 7 : guti.i + 6);
+                this.matrix();
+                this.showValidMoves(guti.i);
+
+                GutiManager.update = false;
+            });
             GutiManager.objects[i] = circle;
             i++;
         }
@@ -83,8 +82,7 @@ class GutiManager {
             gutis.push({
                 x: OFFSET_X + column * 100,
                 y: OFFSET_Y + row * 100,
-                isOwn: guti === 1,
-                blank: guti === 0
+                color: guti
             });
             if((column + 1) % 5 === 0) {
                 row++;
@@ -94,6 +92,48 @@ class GutiManager {
             column++;
         }
         return gutis;
+    }
+
+    /**
+     * Convert orientation index to matrix corientation indices
+     * For example: 9 -> 1, 4
+     */
+    convertToMatrixCoord(index){
+        return [Math.floor(index / 5), index % 5];
+    }
+
+    /**
+     * Convert matrix indices to orientation index
+     * @param row
+     * @param column
+     * @returns {*}
+     */
+    convertToOrientation(row, column){
+        return row * 5 + column;
+    }
+
+    /**
+     * Valid moves of a guti in index position
+     * @param index
+     * @returns {[]}
+     */
+    possibleMoves(index){
+        let matrixCord = this.convertToMatrixCoord(index);
+        let validMoves = [];
+        validMoves.push(this.convertToOrientation(matrixCord[0], matrixCord[1] + 1));
+        console.log(validMoves);
+        return validMoves;
+    }
+
+    /**
+     * Updates the orientation of board to show the valid moves
+     * @param index
+     */
+    showValidMoves(index){
+        // TODO clear previous suggestions
+        for(let validMove of this.possibleMoves(index)){
+            GutiManager.orientation[validMove] = GUTI_COLOR.VALID;
+        }
     }
 }
 
