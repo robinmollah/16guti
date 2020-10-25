@@ -39,7 +39,7 @@ function create() {
   }
 
   // Draw the gutis
-  GutiManager.draw(this);
+  // GutiManager.draw(this);
 
   console.log(GutiManager.getGutiOrientation());
 }
@@ -48,6 +48,7 @@ function update(){
   // Phaser.Geom.Line.Rotate(line, 0.02);
   // graphics.clear();
   // graphics.strokeLineShape(line);
+  GutiManager.draw(this);
 }
 
 function getLines(){
