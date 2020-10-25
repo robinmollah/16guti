@@ -1,8 +1,8 @@
 import Phaser from "phaser";
 import GutiManager from "./GutiManager";
+import {OFFSET_X, OFFSET_Y} from "./BoardRenderer";
 // import logoImg from "./assets/logo.png";
 const LINE_LENGTH = 400;
-const OFFSET = 100;
 
 const config = {
   type: Phaser.AUTO,
@@ -31,8 +31,8 @@ function create() {
       color: 0x444444
     }
   });
-  boardLines.x = OFFSET;
-  boardLines.y = OFFSET;
+  boardLines.x = OFFSET_X;
+  boardLines.y = OFFSET_Y;
 
   for(let line of getLines()){
     boardLines.strokeLineShape(line);

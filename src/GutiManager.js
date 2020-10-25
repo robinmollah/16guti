@@ -1,15 +1,13 @@
-let GutiStyle = {
-    lineStyle: {
-        width: 4,
-        color: 0xff0000
-    },
-    fillStyle: {
-        color: 0xDB7093
-    }
-};
-let OFFSET = 100;
+import {OFFSET_X, OFFSET_Y} from "./BoardRenderer";
+
+const OWN_GUTI_COLOR = 0x006a4e;
+const OPP_GUTI_COLOR = 0xDB7093;
 
 class GutiManager {
+    /**
+     * 1, 0, -1 representing the sequence of gutis
+     * @returns {*}
+     */
     getGutiOrientation(){
         let gutis = new Array(25).fill(-1, 0, 10)
             .fill(0, 10, 15)
@@ -17,25 +15,28 @@ class GutiManager {
         return gutis;
     }
 
-    draw(graphics){
-        let own = graphics.add.graphics(GutiStyle);
-        GutiStyle.fillStyle.color = 0x006a4e
-        let opponent = graphics.add.graphics(GutiStyle)
-        opponent.x = OFFSET;
-        opponent.y = OFFSET;
-        own.x = OFFSET;
-        own.y = OFFSET;
-
+    draw(board){
         let radius = 8;
         for (let guti of this.getGutiPositions()){
             if(guti.isOwn){
-                own.fillCircle(guti.x, guti.y, radius);
+                let circle = board.add.circle(guti.x, guti.y, radius, OWN_GUTI_COLOR);
+                circle.setInteractive().once('pointerdown', () => {
+                    console.log("Listened", guti.x, guti.y);
+                });
             } else {
-                opponent.fillCircle(guti.x, guti.y, radius);
+                let circle = board.add.circle(guti.x, guti.y, radius, OPP_GUTI_COLOR);
+                circle.setInteractive().once('pointerdown', () => {
+                    console.log("Listened", guti.x, guti.y);
+                });
             }
         }
     }
 
+    /**
+     * Get geometric position of gutis
+     * @param offset
+     * @returns {[]}
+     */
     getGutiPositions(offset = 100){
         let gutis = [];
         let row = 0;
@@ -43,8 +44,8 @@ class GutiManager {
         for (let guti of this.getGutiOrientation()){
             if(guti){
                 gutis.push({
-                    x: column * 100,
-                    y: row * 100,
+                    x: OFFSET_X + column * 100,
+                    y: OFFSET_Y + row * 100,
                     isOwn: guti == 1
                 });
             }
