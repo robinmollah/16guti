@@ -126,35 +126,22 @@ class GutiManager {
         let column = matrixCord[1];
 
         // Cross
-        validMoves.push(
-            this.convertToOrientation(row, column + 1)
-        );
-        validMoves.push(
-            this.convertToOrientation(row, column - 1)
-        );
-        validMoves.push(
-            this.convertToOrientation(row+1, column)
-        );
-        validMoves.push(
-            this.convertToOrientation(row - 1, column)
-        );
+        validMoves.push([row, column + 1]);
+        validMoves.push([row, column - 1]);
+        validMoves.push([row + 1, column]);
+        validMoves.push([row - 1, column]);
 
         // Diags
-        validMoves.push(
-            this.convertToOrientation(row+1, column + 1)
-        );
-        validMoves.push(
-            this.convertToOrientation(row + 1, column - 1)
-        );
-        validMoves.push(
-            this.convertToOrientation(row - 1, column -1 )
-        );
-        validMoves.push(
-            this.convertToOrientation(row - 1, column + 1)
-        )
+        if((row % 2 === 0 && column % 2 === 0)
+            || (row % 2 !== 0 && column % 2 !== 0)){
+            validMoves.push([row + 1, column + 1]);
+            validMoves.push([row + 1, column - 1]);
+            validMoves.push([row - 1, column - 1]);
+            validMoves.push([row - 1, column + 1])
+        }
 
-        // TODO filter guti occupied
         // TODO filter out of bound
+        validMoves = validMoves.map((value) => this.convertToOrientation(value[0], value[1]));
         validMoves = validMoves.filter(this.isBlank)
         console.log(validMoves);
         return validMoves;
@@ -169,7 +156,6 @@ class GutiManager {
      * @param index
      */
     showValidMoves(index){
-        // TODO clear previous suggestions
         GutiManager.orientation = GutiManager.orientation.map((value)=>{
             if(value === GUTI_COLOR.VALID) return GUTI_COLOR.BLANK;
             else return value;
