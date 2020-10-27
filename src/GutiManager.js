@@ -1,18 +1,13 @@
 import {OFFSET_X, OFFSET_Y} from "./BoardRenderer";
 
-const GUTI_VAL = {
-    OWN: 1,
-    OPP: -1,
-    VALID: -2,
-    BLANK: 0,
-}
-
 const GUTI_COLOR = {
     OWN: 0x006A4E,
     OPP: 0xDB7093,
     BLANK: 0x111111,
     VALID: 0xCC7A00
 }
+
+let TURN = GUTI_COLOR.OWN;
 
 const GUTI_RADIUS = 8;
 
@@ -37,6 +32,7 @@ class GutiManager {
         // TODO do the same for gutiObjects
         GutiManager.orientation[dest] = GutiManager.orientation[source];
         GutiManager.orientation[source] = GUTI_COLOR.BLANK;
+        this.clearSuggestions();
     }
 
     matrix(){
@@ -54,21 +50,28 @@ class GutiManager {
         let i = 0;
         for (let guti of this.getGutiPositions()){
             let circle;
-            circle = board.add.circle(guti.x, guti.y, radius, guti.color);
+            circle = board.add.circle(guti.x, guti.y, radius, i === GutiManager.picked ? 0xdd0000 : guti.color);
             guti.i = i;
-            if(guti.color === GUTI_COLOR.OWN || guti.color === GUTI_COLOR.OPP){
+            // FIXME a lot of interactive is being set, find a way to solve this memory leak
+            if(guti.color === TURN){
                 circle.setInteractive().once('pointerdown', () => {
-                    // this.moveGuti(guti.i, guti.color === GUTI_COLOR.OWN ? guti.i - 7 : guti.i + 6);
-                    this.matrix();
-                    this.showValidMoves(guti.i, this.getGutiOrientation());
-
-                    GutiManager.update = false;
+                	if(guti.color === TURN){
+						this.showValidMoves(guti.i, this.getGutiOrientation());
+						GutiManager.picked = guti.i;
+						GutiManager.update = false;
+					}
                 });
-            }
+            } else if(guti.color === GUTI_COLOR.VALID){
+            	circle.setInteractive().once('pointerdown', () => {
+					this.moveGuti(GutiManager.picked, guti.i);
+					GutiManager.picked = null;
+					this.flipTurn();
+					GutiManager.update = false;
+				});
+			}
             GutiManager.objects[i] = circle;
             i++;
         }
-        console.log("Orientation", GutiManager.orientation);
     }
 
     /**
@@ -140,10 +143,13 @@ class GutiManager {
             validMoves.push([row - 1, column + 1])
         }
 
-        // TODO filter out of bound
-        validMoves = validMoves.map((value) => this.convertToOrientation(value[0], value[1]));
+        validMoves = validMoves.map((value) =>{
+			if(this.inBound(value[0]) && this.inBound(value[1]))
+				return this.convertToOrientation(value[0], value[1])
+			else
+				return -1;
+		});
         validMoves = validMoves.filter(this.isBlank)
-        console.log(validMoves);
         return validMoves;
     }
 
@@ -151,19 +157,31 @@ class GutiManager {
         return GutiManager.orientation[index] !== GUTI_COLOR.BLANK ? false : index;
     }
 
+    inBound(value){
+    	return value >= 0 && value < 5;
+	}
+
+	flipTurn(){
+    	TURN = TURN === GUTI_COLOR.OWN ? GUTI_COLOR.OPP : GUTI_COLOR.OWN;
+	}
+
     /**
      * Updates the orientation of board to show the valid moves
      * @param index
      */
     showValidMoves(index){
-        GutiManager.orientation = GutiManager.orientation.map((value)=>{
-            if(value === GUTI_COLOR.VALID) return GUTI_COLOR.BLANK;
-            else return value;
-        });
+    	this.clearSuggestions();
         for(let validMove of this.possibleMoves(index)){
             GutiManager.orientation[validMove] = GUTI_COLOR.VALID;
         }
     }
+
+    clearSuggestions(){
+		GutiManager.orientation = GutiManager.orientation.map((value)=>{
+			if(value === GUTI_COLOR.VALID) return GUTI_COLOR.BLANK;
+			else return value;
+		});
+	}
 }
 
 export default new GutiManager()
