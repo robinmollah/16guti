@@ -1,4 +1,5 @@
 import {OFFSET_X, OFFSET_Y} from "./BoardRenderer";
+import {convertToMatrixCoord, convertToOrientation, inBound} from "./Validity";
 
 const GUTI_COLOR = {
     OWN: 0x006A4E,
@@ -33,14 +34,6 @@ class GutiManager {
         GutiManager.orientation[dest] = GutiManager.orientation[source];
         GutiManager.orientation[source] = GUTI_COLOR.BLANK;
         this.clearSuggestions();
-    }
-
-    matrix(){
-        let matrix = [];
-        for(let i = 0; i < 5; i++){
-            matrix.push(GutiManager.orientation.slice(5 * i, 5 + (5 * i)));
-        }
-        return matrix;
     }
 
     draw(board){
@@ -99,23 +92,6 @@ class GutiManager {
         return gutis;
     }
 
-    /**
-     * Convert orientation index to matrix corientation indices
-     * For example: 9 -> 1, 4
-     */
-    convertToMatrixCoord(index){
-        return [Math.floor(index / 5), index % 5];
-    }
-
-    /**
-     * Convert matrix indices to orientation index
-     * @param row
-     * @param column
-     * @returns {*}
-     */
-    convertToOrientation(row, column){
-        return row * 5 + column;
-    }
 
     /**
      * Valid moves of a guti in index position
@@ -123,7 +99,7 @@ class GutiManager {
      * @returns {[]}
      */
     possibleMoves(index){
-        let matrixCord = this.convertToMatrixCoord(index);
+        let matrixCord = convertToMatrixCoord(index);
         let validMoves = [];
         let row = matrixCord[0];
         let column = matrixCord[1];
@@ -144,8 +120,9 @@ class GutiManager {
         }
 
         validMoves = validMoves.map((value) =>{
-			if(this.inBound(value[0]) && this.inBound(value[1]))
-				return this.convertToOrientation(value[0], value[1])
+        	// boundary check
+			if(inBound(value[0]) && inBound(value[1]))
+				return convertToOrientation(value[0], value[1])
 			else
 				return -1;
 		});
@@ -156,10 +133,6 @@ class GutiManager {
     isBlank(index){
         return GutiManager.orientation[index] !== GUTI_COLOR.BLANK ? false : index;
     }
-
-    inBound(value){
-    	return value >= 0 && value < 5;
-	}
 
 	flipTurn(){
     	TURN = TURN === GUTI_COLOR.OWN ? GUTI_COLOR.OPP : GUTI_COLOR.OWN;
