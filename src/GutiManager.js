@@ -1,5 +1,5 @@
 import {OFFSET_X, OFFSET_Y} from "./BoardRenderer";
-import {convertToMatrixCoord, convertToOrientation, inBound} from "./Validity";
+import {convertToMatrixCoord, convertToOrientation, inBound, rowColumnOfMat} from "./Validity";
 
 const GUTI_COLOR = {
     OWN: 0x006A4E,
@@ -9,6 +9,9 @@ const GUTI_COLOR = {
 }
 
 let TURN = GUTI_COLOR.OWN;
+let NOT_TURN = function(){
+	return TURN === GUTI_COLOR.OWN ? GUTI_COLOR.OPP : GUTI_COLOR.OWN;
+}
 
 const GUTI_RADIUS = 8;
 
@@ -126,11 +129,49 @@ class GutiManager {
 			else
 				return -1;
 		});
-        validMoves = validMoves.filter(this.isBlank)
-        return validMoves;
+        let additionalMoves = [];
+        validMoves = validMoves.filter(function(idx){
+        	if(GutiManager.orientation[idx] !== GUTI_COLOR.BLANK){
+				if(GutiManager.orientation[idx] === NOT_TURN()){
+					// Got contact with a guti of opponent
+
+					console.log("opp", idx, "me", index);
+					console.log("matrix", "me", rowColumnOfMat(index), rowColumnOfMat(idx));
+
+					let me = rowColumnOfMat(index);
+					let opponent = rowColumnOfMat(idx);
+					if(me.col === opponent.col){
+						// Same column
+						console.log("same column", [me.row, me.col+2]);
+						// FIXME compare me and opponent top or bottom
+						if(me.row < opponent.row)
+							additionalMoves.push(convertToOrientation(opponent.row + 1 , me.col));
+						else if(me.row > opponent.row)
+							additionalMoves.push(convertToOrientation(opponent.row - 1 , me.col));
+					} else if(me.row === opponent.row){
+						// same row
+						additionalMoves.push(convertToOrientation(me.row, opponent.col - 1));
+					}
+
+					return false;
+				}
+			}
+
+        	// Must be blank position to avoid putting on top of another GUTI
+        	return GutiManager.orientation[idx] === GUTI_COLOR.BLANK ? idx : false
+		});
+        console.log("additional moves ", additionalMoves, validMoves);
+		validMoves.push(...additionalMoves);
+		console.log(validMoves);
+		return validMoves;
     }
 
-    isBlank(index){
+	/**
+	 * If the position is blank in the given index
+	 * @param index
+	 * @returns {boolean|*}
+	 */
+	isBlank(index){
         return GutiManager.orientation[index] !== GUTI_COLOR.BLANK ? false : index;
     }
 

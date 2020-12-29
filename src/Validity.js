@@ -6,6 +6,13 @@ export function convertToMatrixCoord(index){
 	return [Math.floor(index / 5), index % 5];
 }
 
+export function rowColumnOfMat(index){
+	return {
+		"row": Math.floor(index/5),
+		"col": index % 5
+	}
+}
+
 /**
  * Convert matrix indices to orientation index
  * @param row
