@@ -16,24 +16,27 @@ let NOT_TURN = function(){
 const GUTI_RADIUS = 8;
 
 class GutiManager {
+	constructor() {
+		this.start();
+	}
+
+	start(){
+		let gutis = new Array(25).fill(GUTI_COLOR.OPP, 0, 10)
+			.fill(GUTI_COLOR.BLANK, 10, 15)
+			.fill(GUTI_COLOR.OWN, 15, 25);
+		GutiManager.orientation = gutis;
+		GutiManager.objects = {...gutis};
+	}
+
     /**
      * 1, 0, -1 representing the sequence of gutis
      * @returns {*}
      */
     getGutiOrientation(){
-        if(!GutiManager.oriented){
-            let gutis = new Array(25).fill(GUTI_COLOR.OPP, 0, 10)
-                .fill(GUTI_COLOR.BLANK, 10, 15)
-                .fill(GUTI_COLOR.OWN, 15, 25);
-            GutiManager.orientation = gutis;
-            GutiManager.objects = {...gutis};
-            GutiManager.oriented = true;
-        }
         return GutiManager.orientation;
     }
 
     moveGuti(source, dest){
-        // TODO do the same for gutiObjects
         GutiManager.orientation[dest] = GutiManager.orientation[source];
         GutiManager.orientation[source] = GUTI_COLOR.BLANK;
         this.clearSuggestions();
@@ -41,6 +44,9 @@ class GutiManager {
 
     draw(board){
         if(GutiManager.update) return
+		// Add turn text
+		board.add.text(OFFSET_X, 50, 'TURN', {fill: TURN === GUTI_COLOR.OWN ? 'green' : 'red'});
+
         GutiManager.update = true
         let radius = GUTI_RADIUS;
         let i = 0;
@@ -131,7 +137,8 @@ class GutiManager {
 		});
         let additionalMoves = [];
         validMoves = validMoves.filter(function(idx){
-        	if(GutiManager.orientation[idx] !== GUTI_COLOR.BLANK){
+        	// Must be on empty place
+        	if(!GutiManager.isBlank(idx)){
 				if(GutiManager.orientation[idx] === NOT_TURN()){
 					// Got contact with a guti of opponent
 
@@ -143,11 +150,19 @@ class GutiManager {
 					if(me.col === opponent.col){
 						// Same column
 						console.log("same column", [me.row, me.col+2]);
-						// FIXME compare me and opponent top or bottom
-						if(me.row < opponent.row)
-							additionalMoves.push(convertToOrientation(opponent.row + 1 , me.col));
-						else if(me.row > opponent.row)
-							additionalMoves.push(convertToOrientation(opponent.row - 1 , me.col));
+						if(me.row < opponent.row){
+							// My guti is below opponents guti
+							if(GutiManager.isBlank(convertToOrientation(opponent.row + 1, me.col))){
+								// valid move is above opponent
+								additionalMoves.push(convertToOrientation(opponent.row + 1 , me.col));
+							}
+						}
+						else if(me.row > opponent.row) {// My guti is above opponents guti
+							if(GutiManager.isBlank(convertToOrientation(opponent.row - 1, me.col))){
+								// valid move is below opponent
+								additionalMoves.push(convertToOrientation(opponent.row - 1, me.col));
+							}
+						}
 					} else if(me.row === opponent.row){
 						// same row
 						additionalMoves.push(convertToOrientation(me.row, opponent.col - 1));
@@ -171,7 +186,7 @@ class GutiManager {
 	 * @param index
 	 * @returns {boolean|*}
 	 */
-	isBlank(index){
+	static isBlank(index){
         return GutiManager.orientation[index] !== GUTI_COLOR.BLANK ? false : index;
     }
 
@@ -195,6 +210,23 @@ class GutiManager {
 			if(value === GUTI_COLOR.VALID) return GUTI_COLOR.BLANK;
 			else return value;
 		});
+	}
+
+	exportGameState(){
+    	let game_state = {
+			turn: TURN,
+			orientation: GutiManager.orientation
+		};
+		console.log(game_state);
+		let xmlHttp = new XMLHttpRequest();
+		let the_url = "http://localhost:3000/gamestate";
+		xmlHttp.open("POST", the_url);
+		xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		xmlHttp.send(JSON.stringify(game_state));
+	}
+
+	importGameState(filename){
+
 	}
 }
 

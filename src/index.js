@@ -38,10 +38,14 @@ function create() {
     boardLines.strokeLineShape(line);
   }
 
-  // Draw the gutis
-  // GutiManager.draw(this);
+  // export button
+  const exportButton = this.add.text(config.width - 95, 50, 'export', {fill: '#0f0'});
+  exportButton.setInteractive().on('pointerdown', () => {
+    console.log("Exporting");
+    GutiManager.exportGameState();
+  });
 
-  console.log(GutiManager.getGutiOrientation());
+
 }
 
 function update(){
