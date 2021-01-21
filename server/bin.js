@@ -1,5 +1,6 @@
 let express = require('express');
 let cors = require('cors');
+let fs = require('fs');
 let app = express();
 const PORT = 3000;
 
@@ -17,9 +18,15 @@ app.get('/', (req, res) => {
 	});
 });
 
-app.post('/gamestate', (req, res) => {
+app.post('/gamestate/:id', (req, res) => {
 	console.log(req.body);
 	// TODO save game state with id
+	let id = req.params.id;
+	fs.writeFile('./server/states/game_' + id + ".json", JSON.stringify(req.body), (err) => {
+		if(err){
+			console.error("Error", err);
+		}
+	});
 	res.json({
 		status: "success",
 		message: "successfully submitted",

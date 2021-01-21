@@ -219,7 +219,7 @@ class GutiManager {
 		};
 		console.log(game_state);
 		let xmlHttp = new XMLHttpRequest();
-		let the_url = "http://localhost:3000/gamestate";
+		let the_url = "http://localhost:3000/gamestate/" + "robin";
 		xmlHttp.open("POST", the_url);
 		xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 		xmlHttp.send(JSON.stringify(game_state));
