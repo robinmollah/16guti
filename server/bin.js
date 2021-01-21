@@ -35,8 +35,27 @@ app.post('/gamestate/:id', (req, res) => {
 });
 
 app.get('/gamestate/:id', (req, res) => {
-	// TODO
+	fs.readFile('./server/states/game_' + req.params.id + ".json", (err, data) => {
+		if(err){
+			res.json({
+				status: false,
+				error: err
+			});
+		} else {
+			res.json({
+				status: true,
+				data: JSON.parse(data.toString())
+			})
+		}
+	});
 });
+
+app.get('/gamestate', (req, res) => {
+	res.json({
+		status: false,
+		error: "game_id not found"
+	})
+})
 
 app.listen(PORT, () => {
 	console.log("🍫 server listening", PORT);
