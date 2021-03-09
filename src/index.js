@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import GutiManager from "./GutiManager";
 import {OFFSET_X, OFFSET_Y} from "./BoardRenderer";
+import BoardView from "./views/BoardView";
+import Board from "./models/Board";
 // import logoImg from "./assets/logo.png";
 const LINE_LENGTH = 400;
 
@@ -18,6 +20,7 @@ const config = {
 
 const game = new Phaser.Game(config);
 let boardLines;
+let board_view;
 
 function preload() {
   // this.load.image("logo", logoImg);
@@ -45,14 +48,16 @@ function create() {
     GutiManager.exportGameState();
   });
 
-
+  board_view = new BoardView(new Board(), this);
+  board_view.render();
 }
 
 function update(){
   // Phaser.Geom.Line.Rotate(line, 0.02);
   // graphics.clear();
   // graphics.strokeLineShape(line);
-  GutiManager.draw(this);
+  // GutiManager.draw(this);
+  // board_view.render();
 }
 
 function getLines(){
