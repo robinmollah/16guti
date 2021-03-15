@@ -1,8 +1,36 @@
-<!DOCTYPE html>
-<html>
-  <head>
+<!doctype html>
+
+<html lang="en">
+<head>
     <meta charset="utf-8">
-  </head>
-  <body>
-  </body>
+
+    <title>10 Soldiers</title>
+    <meta name="description" content="The HTML5 Herald">
+    <meta name="author" content="SitePoint">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+<script src="js/GutiManager.js"></script>
+<div id="game-root">
+    <div id="row-1"></div>
+    <br/>
+    <div id="row-2"></div>
+    <br/>
+    <div id="row-3"></div>
+    <br/>
+    <div id="row-4"></div>
+    <br/>
+    <div id="row-5"></div>
+</div>
+<div class="turn-container">
+    <div id="turn" class="keepFocusing animateToRight">YOUR TURN</div>
+</div>
+<script>
+	let gutiManager = new GutiManager();
+	let board = document.getElementById("game-root");
+	gutiManager.draw(board);
+</script>
+</body>
 </html>

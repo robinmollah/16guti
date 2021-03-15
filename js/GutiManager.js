@@ -1,19 +1,14 @@
-import {OFFSET_X, OFFSET_Y} from "./BoardRenderer";
-import {convertToMatrixCoord, convertToOrientation, inBound, rowColumnOfMat} from "./Validity";
-
 const GUTI_COLOR = {
-    OWN: 0x006A4E,
-    OPP: 0xDB7093,
-    BLANK: 0x111111,
-    VALID: 0xCC7A00
+    PLAYER1: "#006A4E",
+    PLAYER2: "#DB7093",
+    BLANK: "#111111",
+    VALID: "#CC7A00"
 }
 
-let TURN = GUTI_COLOR.OWN;
+let TURN = GUTI_COLOR.PLAYER1;
 let NOT_TURN = function(){
-	return TURN === GUTI_COLOR.OWN ? GUTI_COLOR.OPP : GUTI_COLOR.OWN;
+	return TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
 }
-
-const GUTI_RADIUS = 8;
 
 class GutiManager {
 	constructor() {
@@ -21,11 +16,9 @@ class GutiManager {
 	}
 
 	start(){
-		let gutis = new Array(25).fill(GUTI_COLOR.OPP, 0, 10)
+		GutiManager.orientation = new Array(25).fill(GUTI_COLOR.PLAYER2, 0, 10)
 			.fill(GUTI_COLOR.BLANK, 10, 15)
-			.fill(GUTI_COLOR.OWN, 15, 25);
-		GutiManager.orientation = gutis;
-		GutiManager.objects = {...gutis};
+			.fill(GUTI_COLOR.PLAYER1, 15, 25);
 	}
 
     /**
@@ -42,36 +35,56 @@ class GutiManager {
         this.clearSuggestions();
     }
 
-    draw(board){
+    draw(){
         if(GutiManager.update) return
 		// Add turn text
-		board.add.text(OFFSET_X, 50, 'TURN', {fill: TURN === GUTI_COLOR.OWN ? 'green' : 'red'});
+		let turnElem = document.getElementById("turn");
+		turnElem.style.color = TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER1 : GUTI_COLOR.PLAYER2;
+		turnElem.className = TURN === GUTI_COLOR.PLAYER1 ? "animateToRight" : "animateToLeft";
+		turnElem.style.left = TURN === GUTI_COLOR.PLAYER1 ? "75%" : "10%";
+		turnElem.innerText = TURN === GUTI_COLOR.PLAYER1 ? "Greens turn" : "Pinks turn";
+
+		for(let j = 1; j< 6; j++){
+			document.getElementById(`row-${j}`).innerText = "";
+		}
 
         GutiManager.update = true
-        let radius = GUTI_RADIUS;
         let i = 0;
         for (let guti of this.getGutiPositions()){
             let circle;
-            circle = board.add.circle(guti.x, guti.y, radius, i === GutiManager.picked ? 0xdd0000 : guti.color);
+            circle = document.createElement("div");
+            circle.classList.add("guti");
+			circle.style.background = i === GutiManager.picked ? "#dd0000" : guti.color
             guti.i = i;
             // FIXME a lot of interactive is being set, find a way to solve this memory leak
             if(guti.color === TURN){
-                circle.setInteractive().once('pointerdown', () => {
+                circle.addEventListener('click', () => {
                 	if(guti.color === TURN){
 						this.showValidMoves(guti.i, this.getGutiOrientation());
 						GutiManager.picked = guti.i;
 						GutiManager.update = false;
+						this.draw();
 					}
                 });
+
+				circle.addEventListener('mouseenter', () => {
+					if(guti.color === TURN){
+						this.showValidMoves(guti.i, this.getGutiOrientation());
+						GutiManager.picked = guti.i;
+						GutiManager.update = false;
+						this.draw();
+					}
+				});
             } else if(guti.color === GUTI_COLOR.VALID){
-            	circle.setInteractive().once('pointerdown', () => {
+            	circle.addEventListener('click', () => {
 					this.moveGuti(GutiManager.picked, guti.i);
 					GutiManager.picked = null;
 					this.flipTurn();
 					GutiManager.update = false;
+					this.draw();
 				});
 			}
-            GutiManager.objects[i] = circle;
+            document.getElementById(`row-${(i%5) + 1}`).append(circle);
             i++;
         }
     }
@@ -87,8 +100,6 @@ class GutiManager {
         let column = 0;
         for (let guti of this.getGutiOrientation()){
             gutis.push({
-                x: OFFSET_X + column * 100,
-                y: OFFSET_Y + row * 100,
                 color: guti
             });
             if((column + 1) % 5 === 0) {
@@ -141,7 +152,6 @@ class GutiManager {
         	if(!GutiManager.isBlank(idx)){
 				if(GutiManager.orientation[idx] === NOT_TURN()){
 					// Got contact with a guti of opponent
-
 					console.log("opp", idx, "me", index);
 					console.log("matrix", "me", rowColumnOfMat(index), rowColumnOfMat(idx));
 
@@ -165,7 +175,19 @@ class GutiManager {
 						}
 					} else if(me.row === opponent.row){
 						// same row
-						additionalMoves.push(convertToOrientation(me.row, opponent.col - 1));
+						if(me.col > opponent.col){
+							// Opp is in right side
+							if(GutiManager.isBlank(convertToOrientation(me.row, opponent.col -1))){
+								additionalMoves.push(convertToOrientation(me.row, opponent.col - 1));
+							}
+						} else if(me.col < opponent.col){
+							// Opp is in left side
+							if(GutiManager.isBlank(convertToOrientation(me.row, opponent.col +1))){
+								additionalMoves.push(convertToOrientation(me.row, opponent.col + 1));
+							}
+						}
+
+
 					}
 
 					return false;
@@ -191,7 +213,7 @@ class GutiManager {
     }
 
 	flipTurn(){
-    	TURN = TURN === GUTI_COLOR.OWN ? GUTI_COLOR.OPP : GUTI_COLOR.OWN;
+    	TURN = TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
 	}
 
     /**
@@ -211,23 +233,35 @@ class GutiManager {
 			else return value;
 		});
 	}
+}
 
-	exportGameState(){
-    	let game_state = {
-			turn: TURN,
-			orientation: GutiManager.orientation
-		};
-		console.log(game_state);
-		let xmlHttp = new XMLHttpRequest();
-		let the_url = "http://localhost:3000/gamestate/" + "robin";
-		xmlHttp.open("POST", the_url);
-		xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-		xmlHttp.send(JSON.stringify(game_state));
-	}
 
-	importGameState(filename){
 
+/**
+ * Convert orientation index to matrix corientation indices
+ * For example: 9 -> 1, 4
+ */
+ function convertToMatrixCoord(index){
+	return [Math.floor(index / 5), index % 5];
+}
+
+ function rowColumnOfMat(index){
+	return {
+		"row": Math.floor(index/5),
+		"col": index % 5
 	}
 }
 
-export default new GutiManager()
+/**
+ * Convert matrix indices to orientation index
+ * @param row
+ * @param column
+ * @returns {*}
+ */
+ function convertToOrientation(row, column){
+	return row * 5 + column;
+}
+
+ function inBound(value){
+	return value >= 0 && value < 5;
+}

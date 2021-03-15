@@ -1,0 +1,63 @@
+.guti {
+    width: 2.1em;
+    height: 2.1em;
+    border-radius: 50%;
+    background: red;
+}
+
+
+#game-root {
+    width: 90%;
+    transform: rotate(
+            90deg
+    );
+    position: relative;
+    top: 90px;
+}
+
+#row-1, #row-2, #row-3, #row-4, #row-5 {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 5em;
+}
+
+#turn {
+    font-size: 2em;
+    font-weight: bolder;
+    position: relative;
+}
+
+.turn-container {
+    width: 90vw;
+}
+
+.keepFocusing {
+    animation-name: focusing;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes focusing {
+    from {background-color: lightgrey;}
+    to {background-color: yellow;}
+}
+
+.animateToRight {
+    animation-name: toRight;
+    animation-duration: 1s;
+}
+
+@keyframes toRight {
+    from {left: 10%;}
+    to {left: 75%;}
+}
+
+.animateToLeft {
+    animation-name: toLeft;
+    animation-duration: 1s;
+}
+
+@keyframes toLeft {
+    from {left: 75%;}
+    to {left: 10%;}
+}
