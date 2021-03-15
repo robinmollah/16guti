@@ -41,7 +41,7 @@ class GutiManager {
 		let turnElem = document.getElementById("turn");
 		turnElem.style.color = TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER1 : GUTI_COLOR.PLAYER2;
 		turnElem.className = TURN === GUTI_COLOR.PLAYER1 ? "animateToRight" : "animateToLeft";
-		turnElem.style.left = TURN === GUTI_COLOR.PLAYER1 ? "75%" : "10%";
+		turnElem.style.top = TURN === GUTI_COLOR.PLAYER1 ? "75vh" : "10vh";
 		turnElem.innerText = TURN === GUTI_COLOR.PLAYER1 ? "Greens turn" : "Pinks turn";
 
 		for(let j = 1; j< 6; j++){

@@ -28,7 +28,8 @@
 }
 
 .turn-container {
-    width: 90vw;
+    position: absolute;
+    top: 0px;
 }
 
 .keepFocusing {
@@ -43,21 +44,21 @@
 }
 
 .animateToRight {
-    animation-name: toRight;
+    animation-name: toBelow;
     animation-duration: 1s;
 }
 
-@keyframes toRight {
-    from {left: 10%;}
-    to {left: 75%;}
+@keyframes toBelow {
+    from {top: 10vh;}
+    to {top: 75vh;}
 }
 
 .animateToLeft {
-    animation-name: toLeft;
+    animation-name: toTop;
     animation-duration: 1s;
 }
 
-@keyframes toLeft {
-    from {left: 75%;}
-    to {left: 10%;}
+@keyframes toTop {
+    from {top: 75vh;}
+    to {top: 10vh;}
 }
