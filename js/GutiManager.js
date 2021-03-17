@@ -94,17 +94,7 @@ class GutiManager {
             	circle.addEventListener('click', () => {
             		console.log("picked", GutiManager.picked, "dest", guti.i);
 					this.moveGuti(GutiManager.picked, guti.i);
-					const diff = Math.abs(GutiManager.picked - guti.i);
-					if(diff === 10
-						|| diff === 2
-					){
-						if(TURN === GUTI_COLOR.PLAYER1){
-							this.score.green++;
-						} else {
-							this.score.pink++;
-						}
-						updateScore(this.score.green, this.score.pink);
-					}
+					this.killHandler(guti);
 					GutiManager.picked = null;
 					this.flipTurn();
 					GutiManager.update = false;
@@ -254,6 +244,27 @@ class GutiManager {
 			if(value === GUTI_COLOR.VALID) return GUTI_COLOR.BLANK;
 			else return value;
 		});
+	}
+
+	killHandler(guti) {
+		const diff = Math.abs(GutiManager.picked - guti.i);
+		const min = Math.min(GutiManager.picked, guti.i);
+
+		if(diff === 10 // row side kill
+			|| diff === 2 // column side kill
+		){
+			if(diff === 10){
+				GutiManager.orientation[min + 5] = GUTI_COLOR.BLANK;
+			} else if(diff === 2) {
+				GutiManager.orientation[min + 1] = GUTI_COLOR.BLANK;
+			}
+			if(TURN === GUTI_COLOR.PLAYER1){
+				this.score.green++;
+			} else {
+				this.score.pink++;
+			}
+			updateScore(this.score.green, this.score.pink);
+		}
 	}
 }
 
