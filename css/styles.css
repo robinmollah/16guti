@@ -5,6 +5,10 @@
     background: red;
 }
 
+body {
+    width: 820px;
+    height: 620px;
+}
 
 #game-root {
     width: 90%;
@@ -12,13 +16,14 @@
             90deg
     );
     position: relative;
-    top: 90px;
+    top: 150px;
 }
 
 #row-1, #row-2, #row-3, #row-4, #row-5 {
     display: flex;
     justify-content: space-around;
     margin-bottom: 5em;
+    width: 85%;
 }
 
 #turn {
@@ -61,4 +66,23 @@
 @keyframes toTop {
     from {top: 75vh;}
     to {top: 10vh;}
+}
+
+#scoreboard {
+    color: black;
+    border: 1px solid red;
+    width: fit-content;
+    font-weight: bolder;
+    padding: 0.5em;
+    font-size: 3em;
+    position: absolute;
+    right: 1em;
+}
+
+#green-score {
+    color: green;
+}
+
+#pink-score {
+    color: deeppink;
 }

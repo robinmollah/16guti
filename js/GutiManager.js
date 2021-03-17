@@ -10,9 +10,28 @@ let NOT_TURN = function(){
 	return TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
 }
 
+function updateTurn() {
+	let turnElem = document.getElementById("turn");
+	turnElem.style.color = TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER1 : GUTI_COLOR.PLAYER2;
+	turnElem.className = TURN === GUTI_COLOR.PLAYER1 ? "animateToRight" : "animateToLeft";
+	turnElem.style.top = TURN === GUTI_COLOR.PLAYER1 ? "75vh" : "10vh";
+	turnElem.innerText = TURN === GUTI_COLOR.PLAYER1 ? "Greens turn" : "Pinks turn";
+}
+
+function updateScore(green_score, pink_score){
+	let greenScore = document.getElementById("green-score");
+	let pinkScore = document.getElementById("pink-score");
+	greenScore.innerText = green_score;
+	pinkScore.innerText = pink_score;
+}
+
 class GutiManager {
 	constructor() {
 		this.start();
+		this.score = {
+			green: 0,
+			pink: 0
+		}
 	}
 
 	start(){
@@ -37,12 +56,7 @@ class GutiManager {
 
     draw(){
         if(GutiManager.update) return
-		// Add turn text
-		let turnElem = document.getElementById("turn");
-		turnElem.style.color = TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER1 : GUTI_COLOR.PLAYER2;
-		turnElem.className = TURN === GUTI_COLOR.PLAYER1 ? "animateToRight" : "animateToLeft";
-		turnElem.style.top = TURN === GUTI_COLOR.PLAYER1 ? "75vh" : "10vh";
-		turnElem.innerText = TURN === GUTI_COLOR.PLAYER1 ? "Greens turn" : "Pinks turn";
+		updateTurn();
 
 		for(let j = 1; j< 6; j++){
 			document.getElementById(`row-${j}`).innerText = "";
@@ -68,6 +82,7 @@ class GutiManager {
                 });
 
 				circle.addEventListener('mouseenter', () => {
+					console.log("On ", guti.i);
 					if(guti.color === TURN){
 						this.showValidMoves(guti.i, this.getGutiOrientation());
 						GutiManager.picked = guti.i;
@@ -77,7 +92,19 @@ class GutiManager {
 				});
             } else if(guti.color === GUTI_COLOR.VALID){
             	circle.addEventListener('click', () => {
+            		console.log("picked", GutiManager.picked, "dest", guti.i);
 					this.moveGuti(GutiManager.picked, guti.i);
+					const diff = Math.abs(GutiManager.picked - guti.i);
+					if(diff === 10
+						|| diff === 2
+					){
+						if(TURN === GUTI_COLOR.PLAYER1){
+							this.score.green++;
+						} else {
+							this.score.pink++;
+						}
+						updateScore(this.score.green, this.score.pink);
+					}
 					GutiManager.picked = null;
 					this.flipTurn();
 					GutiManager.update = false;
@@ -152,14 +179,11 @@ class GutiManager {
         	if(!GutiManager.isBlank(idx)){
 				if(GutiManager.orientation[idx] === NOT_TURN()){
 					// Got contact with a guti of opponent
-					console.log("opp", idx, "me", index);
-					console.log("matrix", "me", rowColumnOfMat(index), rowColumnOfMat(idx));
 
 					let me = rowColumnOfMat(index);
 					let opponent = rowColumnOfMat(idx);
 					if(me.col === opponent.col){
 						// Same column
-						console.log("same column", [me.row, me.col+2]);
 						if(me.row < opponent.row){
 							// My guti is below opponents guti
 							if(GutiManager.isBlank(convertToOrientation(opponent.row + 1, me.col))){
@@ -197,9 +221,7 @@ class GutiManager {
         	// Must be blank position to avoid putting on top of another GUTI
         	return GutiManager.orientation[idx] === GUTI_COLOR.BLANK ? idx : false
 		});
-        console.log("additional moves ", additionalMoves, validMoves);
 		validMoves.push(...additionalMoves);
-		console.log(validMoves);
 		return validMoves;
     }
 
