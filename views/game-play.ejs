@@ -1,0 +1,57 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta charset="utf-8">
+
+    <title>10 Soldiers</title>
+    <meta name="description" content="The HTML5 Herald">
+    <meta name="author" content="SitePoint">
+    <script>
+        const MY_PLAYER_ID = "<%= player_id %>";
+        const MY_ROOM_NAME = "<%= room_name %>";
+    </script>
+    
+    <link type="text/css" rel="stylesheet" href="/scripts/17Soldier/css/styles.css">
+	
+</head>
+
+<body>
+    <script type="text/javascript" src="/scripts/socketioclient/socket.io.js"></script>
+    <script src="/scripts/17Soldier/js/GutiManager.js"></script>
+    <script src="/scripts/17Soldier/js/connection.js"></script>
+
+    <div id="scoreboard">
+        <span id="pink-score">0</span>:<span id="green-score">0</span>
+    </div>
+    <div id="game-root">
+        <div id="row-1"></div>
+        <br />
+        <div id="row-2"></div>
+        <br />
+        <div id="row-3"></div>
+        <br />
+        <div id="row-4"></div>
+        <br />
+        <div id="row-5"></div>
+    </div>
+    <div class="turn-container">
+        <div id="turn" class="keepFocusing animateToRight">YOUR TURN</div>
+        <% if(player_id == 1){ %>
+            <h2 id="you" style="color: green">You are green.</h2>
+        <% } else { %>
+            <h2 id="you" style="color: pink">You are pink.</h2>
+            <% } %>
+    </div>
+
+    <script>
+        window.gutiManager = new GutiManager();
+        let board = document.getElementById("game-root");
+        window.gutiManager.draw(board);
+        console.log("Room", '<%= JSON.stringify(rooms) %>');
+    </script>
+</body>
+
+</html>
