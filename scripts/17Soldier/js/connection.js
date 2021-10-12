@@ -3,7 +3,7 @@ let ioClient4SS;
 function startServingTo(ipaddrerss, port) {
 	console.log("2. connect to: http://" + ipaddrerss + ":" + port);
 	ioClient4SS = io.connect(
-		"http://" + ipaddrerss + ":" + port
+		"https://" + ipaddrerss + "/socket"
 		// , {withCredentials: false}
 		//, {secure: true}
 	);
