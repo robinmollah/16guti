@@ -1,10 +1,14 @@
+const PORT = 8305;
+
 function startBackDoorServer(sslOptions) {
 
 	let backdoorClients = new Map();
 	let app_backdoor = require("express")();
 
 	let http_backdoor = require("http").Server(app_backdoor);
-	let backdoorServer = require("socket.io")(http_backdoor);
+	let backdoorServer = require("socket.io")(http_backdoor, {
+		path: "/socket"
+	});
 
 	backdoorServer.on("connection", function (socket) {
 		console.log(
@@ -126,9 +130,8 @@ function startBackDoorServer(sslOptions) {
 	});
 
 	http_backdoor
-		//backdoorServer
-		.listen(8305, function () {
-			console.log(" listening on *:" + 8305 + " AS backDoorPort4_io");
+		.listen(PORT, function () {
+			console.log(" listening on *:" + PORT + " AS backDoorPort4_io");
 		});
 }
 
