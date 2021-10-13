@@ -26,7 +26,7 @@ function startBackDoorServer(sslOptions) {
       console.log("SS--> io_backDoorServer nextTurn: " + JSON.stringify(obj));
 
       for (const [key, entry] of backdoorClients.entries()) {
-        if (key.id != socket.id) key.emit("yourTurn", obj);
+        if (key.id !== socket.id) key.emit("yourTurn", obj);
       }
     });
 
@@ -34,7 +34,7 @@ function startBackDoorServer(sslOptions) {
       console.log("SS--> io_backDoorServer nextTurn: " + JSON.stringify(obj));
 
       for (const [key, entry] of backdoorClients.entries()) {
-        if (key.id != socket.id) key.emit("updateVisualData", obj);
+        if (key.id !== socket.id) key.emit("updateVisualData", obj);
       }
     });
 

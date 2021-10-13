@@ -1,5 +1,6 @@
 import { OFFSET_X, OFFSET_Y } from "./BoardRenderer";
 import { convertToMatrixCoord, convertToOrientation, inBound, rowColumnOfMat } from "./Validity";
+import { getSocket } from "./socket";
 
 const GUTI_COLOR = {
   PLAYER1: 0x006A4E,
@@ -69,6 +70,12 @@ class GutiManager {
       } else if (guti.color === GUTI_COLOR.VALID) {
         circle.setInteractive().once("pointerdown", () => {
           this.moveGuti(GutiManager.picked, guti.i);
+          getSocket().emit("nextTurn", {
+            value: TURN,
+            src: GutiManager.picked,
+            dest: guti.i,
+            room: "ROOM_NAME"
+          })
           this.killHandler(guti);
           GutiManager.picked = null;
           this.flipTurn();
