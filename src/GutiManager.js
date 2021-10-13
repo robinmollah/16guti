@@ -21,7 +21,7 @@ class GutiManager {
     this.score = {
       green: 0,
       pink: 0
-    }
+    };
   }
 
   start() {
@@ -69,20 +69,7 @@ class GutiManager {
       } else if (guti.color === GUTI_COLOR.VALID) {
         circle.setInteractive().once("pointerdown", () => {
           this.moveGuti(GutiManager.picked, guti.i);
-
-          const diff = Math.abs(GutiManager.picked - guti.i);
-          if(diff === 10
-            || diff === 2
-          ){
-            if(TURN === GUTI_COLOR.OWN){
-              this.score.green++;
-            } else {
-              this.score.pink++;
-            }
-            console.log("Green ", this.score.green, "Pink ", this.score.pink);
-            // updateScore(this.score.green, this.score.pink);
-          }
-
+          this.killHandler(guti);
           GutiManager.picked = null;
           this.flipTurn();
           GutiManager.update = false;
@@ -254,6 +241,32 @@ class GutiManager {
 
   importGameState(filename) {
 
+  }
+
+  killHandler(guti) {
+    const diff = Math.abs(GutiManager.picked - guti.i);
+    const min = Math.min(GutiManager.picked, guti.i);
+
+
+    if (diff === 10 // row side kill
+      || diff === 2 // column side kill
+    ) {
+      if (diff === 10) {
+        GutiManager.orientation[min + 5] = GUTI_COLOR.BLANK;
+      } else if (diff === 2) {
+        GutiManager.orientation[min + 1] = GUTI_COLOR.BLANK;
+      }
+      if (TURN === GUTI_COLOR.OWN) {
+        this.score.green++;
+      } else {
+        this.score.pink++;
+      }
+      this.updateScore(this.score.green, this.score.pink);
+    }
+  }
+
+  updateScore(green, pink) {
+    console.log(green, pink);
   }
 }
 
