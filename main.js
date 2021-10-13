@@ -1,3 +1,5 @@
+require('dotenv').config();
+const DEBUG = process.env.environment === "DEVELOPMENT";
 const path = require("path");
 const open = require("open");
 const backdoor = require("./src/backdoor.js");
@@ -19,16 +21,15 @@ function startServerListening(httpServer, port, logName) {
 
 	httpServer.listen(port, function () {
 		console.log(logName + " listening on *: " + port);
-		// open("http://127.0.0.1:" + port);
+		if(DEBUG){}
+			// open("http://127.0.0.1:" + port);
 	});
 }
 
 startServerListening(http2, PORT, "http2");
 app.set("view engine", 'ejs');
 
-app.use("/scripts", [
-	express.static(path.join(__dirname, "/scripts")),
-]);
+app.use("/scripts", express.static(path.join(__dirname, "/scripts")));
 backdoor.start();
 
 app.get("/:room", function (req, res) {
@@ -48,10 +49,10 @@ app.get("/:room", function (req, res) {
 		}
 	}
 	let player_id = rooms[room_name].player;
-	res.render('game-play', {player_id, rooms, room_name});
+	res.render('game-play', {player_id, rooms, room_name, DEBUG});
 });
 console.log("Rooms: ", rooms);
 
 app.get("/", function (req, res) {
-	res.status(404).send("Please provide room name. ");
+	res.render('index', {debug: DEBUG});
 });
