@@ -140,20 +140,16 @@ class GutiManager {
         return -1;
     });
     let additionalMoves = [];
-    validMoves = validMoves.filter(function(idx) {
+    validMoves = validMoves.filter(function (idx) {
       // Must be on empty place
       if (!GutiManager.isBlank(idx)) {
         if (GutiManager.orientation[idx] === NOT_TURN()) {
           // Got contact with a guti of opponent
 
-          console.log("opp", idx, "me", index);
-          console.log("matrix", "me", rowColumnOfMat(index), rowColumnOfMat(idx));
-
           let me = rowColumnOfMat(index);
           let opponent = rowColumnOfMat(idx);
           if (me.col === opponent.col) {
             // Same column
-            console.log("same column", [me.row, me.col + 2]);
             if (me.row < opponent.row) {
               // My guti is below opponents guti
               if (GutiManager.isBlank(convertToOrientation(opponent.row + 1, me.col))) {
@@ -168,7 +164,6 @@ class GutiManager {
             }
           } else if (me.row === opponent.row) {
             // same row
-            additionalMoves.push(convertToOrientation(me.row, opponent.col - 1));
             if (me.col > opponent.col) {
               // Opp is in right side
               if (GutiManager.isBlank(convertToOrientation(me.row, opponent.col - 1))) {
@@ -189,9 +184,7 @@ class GutiManager {
       // Must be blank position to avoid putting on top of another GUTI
       return GutiManager.orientation[idx] === GUTI_COLOR.BLANK ? idx : false;
     });
-    console.log("additional moves ", additionalMoves, validMoves);
     validMoves.push(...additionalMoves);
-    console.log(validMoves);
     return validMoves;
   }
 
