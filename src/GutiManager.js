@@ -2,15 +2,15 @@ import { OFFSET_X, OFFSET_Y } from "./BoardRenderer";
 import { convertToMatrixCoord, convertToOrientation, inBound, rowColumnOfMat } from "./Validity";
 
 const GUTI_COLOR = {
-  OWN: 0x006A4E,
-  OPP: 0xDB7093,
+  PLAYER1: 0x006A4E,
+  PLAYER2: 0xDB7093,
   BLANK: 0x111111,
   VALID: 0xCC7A00
 };
 
-let TURN = GUTI_COLOR.OWN;
+let TURN = GUTI_COLOR.PLAYER1;
 let NOT_TURN = function() {
-  return TURN === GUTI_COLOR.OWN ? GUTI_COLOR.OPP : GUTI_COLOR.OWN;
+  return TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
 };
 
 const GUTI_RADIUS = 8;
@@ -25,9 +25,9 @@ class GutiManager {
   }
 
   start() {
-    GutiManager.orientation = new Array(25).fill(GUTI_COLOR.OPP, 0, 10)
+    GutiManager.orientation = new Array(25).fill(GUTI_COLOR.PLAYER2, 0, 10)
       .fill(GUTI_COLOR.BLANK, 10, 15)
-      .fill(GUTI_COLOR.OWN, 15, 25);
+      .fill(GUTI_COLOR.PLAYER1, 15, 25);
     GutiManager.objects = { ...GutiManager.orientation };
   }
 
@@ -48,7 +48,7 @@ class GutiManager {
   draw(board) {
     if (GutiManager.update) return;
     // Add turn text
-    board.add.text(OFFSET_X, 50, "TURN", { fill: TURN === GUTI_COLOR.OWN ? "green" : "red" });
+    board.add.text(OFFSET_X, 50, "TURN", { fill: TURN === GUTI_COLOR.PLAYER1 ? "green" : "red" });
 
     GutiManager.update = true;
     let radius = GUTI_RADIUS;
@@ -205,7 +205,7 @@ class GutiManager {
   }
 
   flipTurn() {
-    TURN = TURN === GUTI_COLOR.OWN ? GUTI_COLOR.OPP : GUTI_COLOR.OWN;
+    TURN = TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
   }
 
   /**
@@ -221,8 +221,11 @@ class GutiManager {
 
   clearSuggestions() {
     GutiManager.orientation = GutiManager.orientation.map((value) => {
-      if (value === GUTI_COLOR.VALID) return GUTI_COLOR.BLANK;
-      else return value;
+      if (value === GUTI_COLOR.VALID) {
+        return GUTI_COLOR.BLANK;
+      } else {
+        return value;
+      }
     });
   }
 
@@ -256,7 +259,7 @@ class GutiManager {
       } else if (diff === 2) {
         GutiManager.orientation[min + 1] = GUTI_COLOR.BLANK;
       }
-      if (TURN === GUTI_COLOR.OWN) {
+      if (TURN === GUTI_COLOR.PLAYER1) {
         this.score.green++;
       } else {
         this.score.pink++;
