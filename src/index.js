@@ -3,7 +3,7 @@ import GutiManager from "./GutiManager";
 import { OFFSET_X, OFFSET_Y } from "./BoardRenderer";
 import { getSocket } from "./socket";
 // import logoImg from "./assets/logo.png";
-const LINE_LENGTH = 400;
+export const LINE_LENGTH = 450;
 
 let name = localStorage.getItem("name");
 if (name && name.length > 0) {
@@ -30,7 +30,7 @@ function initiateGame() {
       create: create,
       update: update,
     },
-    backgroundColor: "#4f4f4f",
+    backgroundColor: "#b76f20",
   };
 
   const game = new Phaser.Game(config);
