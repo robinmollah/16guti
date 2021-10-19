@@ -15,7 +15,8 @@ const config = {
     preload: preload,
     create: create,
     update: update
-  }
+  },
+  backgroundColor: "#4f4f4f"
 };
 
 const game = new Phaser.Game(config);
