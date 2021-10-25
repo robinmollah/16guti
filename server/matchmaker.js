@@ -1,27 +1,21 @@
 let ROOM = [];
 let PLAYER_COUNT = 0;
+let WAITING_ROOM = {};
 
-module.exports.initiate = function initiate(socket) {
-  let ROOM_ID;
-  if (PLAYER_COUNT % 2 === 0) {
-    ROOM_ID = PLAYER_COUNT;
-    ROOM.push({
-      player1: {
-        socket: socket,
-        name: "robin",
-      },
-    });
-  } else {
-    ROOM_ID = Math.floor(PLAYER_COUNT / 2);
-    ROOM[ROOM_ID].player2 = {
-      socket: socket,
-      name: "robin",
-    };
-  }
-  PLAYER_COUNT++;
-  return ROOM_ID;
+module.exports.enterWaitingRoom = function (name, socket) {
+  WAITING_ROOM[name] = socket;
+
+  console.log("WAITING ROOM", Object.keys(WAITING_ROOM), "ROOM", ROOM.length);
 };
+
+module.exports.exitWaitingRoom = function (name) {
+  delete WAITING_ROOM[name];
+};
+
+module.exports.initiate = function initiate(socket) {};
 
 module.exports.notifyPartner = function (room, object) {
   // socket.emit("yourTurn", object);
 };
+
+module.exports.waiting_room = Object.keys(WAITING_ROOM);

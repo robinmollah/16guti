@@ -14,12 +14,21 @@ function startBackDoorServer(sslOptions) {
       "you are connected to io_backDoorServer   as io_backDoorClients id:"
     );
 
-    backdoorClients.set(socket, {});
+    // backdoorClients.set(socket, {});
+    // matchmaker.enterWaitingRoom(socket);
     console.log(`io_backDoorClients.size ` + backdoorClients.size);
     socket.on("nextTurn", function (obj) {
       console.log("SS--> io_backDoorServer nextTurn: ", obj);
 
       matchmaker.notifyPartner(obj);
+    });
+
+    let name;
+    socket.on("initiate", function (obj) {
+      console.log("Initiated ", obj);
+      name = obj.name;
+      matchmaker.enterWaitingRoom(obj.name, socket);
+      // matchmaker.enterWaitingRoom()
     });
 
     socket.on("updateVisualData", function (obj) {
@@ -51,6 +60,7 @@ function startBackDoorServer(sslOptions) {
       console.log("io_backDoorServer disconnected : ", backdoorClients.size);
 
       console.log("disconnect reason: ", reason);
+      matchmaker.exitWaitingRoom(name);
 
       removeFromio_backDoorClients(socket);
     });
