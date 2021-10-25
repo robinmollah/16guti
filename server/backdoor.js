@@ -1,37 +1,29 @@
+const matchmaker = require("./matchmaker");
 const PORT = 8305;
-
 
 function startBackDoorServer(sslOptions) {
   let backdoorClients = new Map();
   let app_backdoor = require("express")();
   let http_backdoor = require("http").Server(app_backdoor);
   let backdoorServer = require("socket.io")(http_backdoor, {
-    path: "/socket"
+    path: "/socket",
   });
 
   backdoorServer.on("connection", function (socket) {
-    console.log(
-      "io_backDoorServer connected with ss id:" +
-      ", total: " +
-      backdoorClients.size
-    );
     socket.send(
       "you are connected to io_backDoorServer   as io_backDoorClients id:"
     );
 
     backdoorClients.set(socket, {});
     console.log(`io_backDoorClients.size ` + backdoorClients.size);
-
     socket.on("nextTurn", function (obj) {
-      console.log("SS--> io_backDoorServer nextTurn: " + JSON.stringify(obj));
+      console.log("SS--> io_backDoorServer nextTurn: ", obj);
 
-      for (const [key, entry] of backdoorClients.entries()) {
-        if (key.id !== socket.id) key.emit("yourTurn", obj);
-      }
+      matchmaker.notifyPartner(obj);
     });
 
     socket.on("updateVisualData", function (obj) {
-      console.log("SS--> io_backDoorServer nextTurn: " + JSON.stringify(obj));
+      console.log("SS--> io_backDoorServer nextTurn: ", obj);
 
       for (const [key, entry] of backdoorClients.entries()) {
         if (key.id !== socket.id) key.emit("updateVisualData", obj);
@@ -39,10 +31,7 @@ function startBackDoorServer(sslOptions) {
     });
 
     function removeFromio_backDoorClients(socket) {
-      //"running" //2do-ranem removeFromio_backDoorClients to removeDeadbackDoorFromAArrau
-      console.log(
-        "---111 removeFromio_backDoorClients:" + backdoorClients.size
-      );
+      console.log("---111 removeFromio_backDoorClients:", backdoorClients.size);
 
       for (const [key, entry] of backdoorClients.entries()) {
         //console.log(entry);
@@ -59,13 +48,9 @@ function startBackDoorServer(sslOptions) {
     }
 
     socket.on("disconnect", function (reason) {
-      console.log(
-        "io_backDoorServer disconnected  from " +
-        ", io_backDoorClients.size : " +
-        backdoorClients.size
-      );
+      console.log("io_backDoorServer disconnected : ", backdoorClients.size);
 
-      console.log("disconnect reason: " + reason);
+      console.log("disconnect reason: ", reason);
 
       removeFromio_backDoorClients(socket);
     });
@@ -81,7 +66,7 @@ function startBackDoorServer(sslOptions) {
     });
 
     socket.on("connect_timeout", (timeout) => {
-      console.log("io_backDoorServer connect_timeout: " + timeout);
+      console.log("io_backDoorServer connect_timeout: ", timeout);
       removeFromio_backDoorClients(socket);
     });
 
@@ -128,11 +113,9 @@ function startBackDoorServer(sslOptions) {
     });
   });
 
-  http_backdoor
-    .listen(PORT, function () {
-      console.log(" listening on *:" + PORT + " AS backDoorPort4_io");
-    });
+  http_backdoor.listen(PORT, function () {
+    console.log(" listening on *:" + PORT + " AS backDoorPort4_io");
+  });
 }
-
 
 module.exports.start = startBackDoorServer;
