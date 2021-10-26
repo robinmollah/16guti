@@ -12,6 +12,8 @@ if (name && name.length > 0) {
   let submit = document.getElementById("submit");
   let name = document.getElementById("username");
   let waiting = document.getElementById("waiting");
+  let game_play = document.getElementById("game_play");
+  let partner_name = document.getElementById("partner-name");
   submit.addEventListener("click", () => {
     // localStorage.setItem("name", name.value);
     prompt1.style.display = "none";
@@ -19,6 +21,12 @@ if (name && name.length > 0) {
     getSocket().emit("initiate", {
       name: name.value,
     });
-    // initiateGame();
+    getSocket().on("ROOM_CREATED", (obj) => {
+      waiting.style.display = "none";
+      console.log("ROOM CREATED", obj);
+      game_play.style.display = "block";
+      partner_name.innerText = obj.name;
+      initiateGame();
+    });
   });
 }

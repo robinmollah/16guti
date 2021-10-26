@@ -40,6 +40,8 @@ function startBackDoorServer(sslOptions) {
       // matchmaker.enterWaitingRoom()
     });
 
+    socket.on("match_started", (obj) => {});
+
     socket.on("updateVisualData", function (obj) {
       console.log("SS--> io_backDoorServer nextTurn: ", obj);
 

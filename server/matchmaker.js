@@ -16,6 +16,12 @@ module.exports.createRoom = (room_name, name, socket) => {
     player1: waiting_partner,
     player2: socket,
   };
+  socket.emit("ROOM_CREATED", {
+    name: last_waiting_partner_name,
+  });
+  waiting_partner.emit("ROOM_CREATED", {
+    name: name,
+  });
   console.log(Object.keys(ROOM));
 };
 

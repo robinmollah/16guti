@@ -17,10 +17,10 @@ input:hover, button:hover {
     margin-bottom: 1em;
 }
 
-#waiting {
+#waiting, #game_play {
     display: none;
 }
 
-h2 {
+h2, h3 {
     color: white;
 }
