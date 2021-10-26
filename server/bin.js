@@ -70,10 +70,6 @@ app.get("/gamestate", (req, res) => {
   });
 });
 
-app.get("/api", (req, res) => {
-  res.send("Hello");
-});
-
 app.use("/api/", apiRouter);
 
 app.listen(PORT, () => {

@@ -23,11 +23,20 @@ function startBackDoorServer(sslOptions) {
       matchmaker.notifyPartner(obj);
     });
 
-    let name;
+    let name,
+      room_count = 0;
     socket.on("initiate", function (obj) {
       console.log("Initiated ", obj);
       name = obj.name;
-      matchmaker.enterWaitingRoom(obj.name, socket);
+
+      if (Object.keys(matchmaker.waiting_room).length) {
+        console.log("Creating room");
+        matchmaker.createRoom(`room_${room_count++}`, name, socket);
+      } else {
+        matchmaker.enterWaitingRoom(obj.name, socket);
+      }
+      console.log("waiting room length", Object.keys(matchmaker.waiting_room));
+
       // matchmaker.enterWaitingRoom()
     });
 
