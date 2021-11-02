@@ -4,7 +4,11 @@ import { getLines } from "./util";
 import GutiManager from "./GutiManager";
 import { getSocket } from "./socket";
 
-export function initiateGame() {
+/**
+ *
+ * @param {'pass_n_play'|'vs_computer'|'online'|'with_friends'} type
+ */
+export function initiateGame(type) {
   const config = {
     type: Phaser.AUTO,
     parent: "phaser-example",
@@ -26,6 +30,7 @@ export function initiateGame() {
 
   function create() {
     // Draw the board
+    GutiManager.game_type = type;
     let boardLines = this.add.graphics({
       lineStyle: {
         width: 4,

@@ -4,13 +4,18 @@ import {
   inBound,
   rowColumnOfMat,
 } from "./Validity";
+import { GUTI_COLOR, isBlank, TURN } from "./GutiManager";
+
+let NOT_TURN = function () {
+  return TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
+};
 
 /**
  * Valid moves of a guti in index position
  * @param index
  * @returns {[]}
  */
-module.exports.possibleMoves = function (index) {
+export function possibleMoves(orientation, index) {
   let matrixCord = convertToMatrixCoord(index);
   let validMoves = [];
   let row = matrixCord[0];
@@ -42,8 +47,8 @@ module.exports.possibleMoves = function (index) {
   let additionalMoves = [];
   validMoves = validMoves.filter(function (idx) {
     // Must be on empty place
-    if (!GutiManager.isBlank(idx)) {
-      if (GutiManager.orientation[idx] === NOT_TURN()) {
+    if (!isBlank(idx)) {
+      if (orientation[idx] === NOT_TURN()) {
         // Got contact with a guti of opponent
 
         let me = rowColumnOfMat(index);
@@ -52,11 +57,7 @@ module.exports.possibleMoves = function (index) {
           // Same column
           if (me.row < opponent.row) {
             // My guti is below opponents guti
-            if (
-              GutiManager.isBlank(
-                convertToOrientation(opponent.row + 1, me.col)
-              )
-            ) {
+            if (isBlank(convertToOrientation(opponent.row + 1, me.col))) {
               // valid move is above opponent
               additionalMoves.push(
                 convertToOrientation(opponent.row + 1, me.col)
@@ -64,11 +65,7 @@ module.exports.possibleMoves = function (index) {
             }
           } else if (me.row > opponent.row) {
             // My guti is above opponents guti
-            if (
-              GutiManager.isBlank(
-                convertToOrientation(opponent.row - 1, me.col)
-              )
-            ) {
+            if (isBlank(convertToOrientation(opponent.row - 1, me.col))) {
               // valid move is below opponent
               additionalMoves.push(
                 convertToOrientation(opponent.row - 1, me.col)
@@ -79,22 +76,14 @@ module.exports.possibleMoves = function (index) {
           // same row
           if (me.col > opponent.col) {
             // Opp is in right side
-            if (
-              GutiManager.isBlank(
-                convertToOrientation(me.row, opponent.col - 1)
-              )
-            ) {
+            if (isBlank(convertToOrientation(me.row, opponent.col - 1))) {
               additionalMoves.push(
                 convertToOrientation(me.row, opponent.col - 1)
               );
             }
           } else if (me.col < opponent.col) {
             // Opp is in left side
-            if (
-              GutiManager.isBlank(
-                convertToOrientation(me.row, opponent.col + 1)
-              )
-            ) {
+            if (isBlank(convertToOrientation(me.row, opponent.col + 1))) {
               additionalMoves.push(
                 convertToOrientation(me.row, opponent.col + 1)
               );
@@ -107,8 +96,8 @@ module.exports.possibleMoves = function (index) {
     }
 
     // Must be blank position to avoid putting on top of another GUTI
-    return GutiManager.orientation[idx] === GUTI_COLOR.BLANK ? idx : false;
+    return orientation[idx] === GUTI_COLOR.BLANK ? idx : false;
   });
   validMoves.push(...additionalMoves);
   return validMoves;
-};
+}

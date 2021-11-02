@@ -7,15 +7,16 @@ import {
 } from "./Validity";
 import { getSocket } from "./socket";
 import { LINE_LENGTH } from "./index";
+import { possibleMoves } from "./PossibleMove";
 
-const GUTI_COLOR = {
+export const GUTI_COLOR = {
   PLAYER1: 0x3d5afe,
   PLAYER2: 0xf73378,
   BLANK: 0x111111,
   VALID: 0xcc7a00,
 };
 
-let TURN = GUTI_COLOR.PLAYER1;
+export let TURN = GUTI_COLOR.PLAYER1;
 let NOT_TURN = function () {
   return TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
 };
@@ -127,122 +128,10 @@ class GutiManager {
   }
 
   /**
-   * Valid moves of a guti in index position
-   * @param index
-   * @returns {[]}
-   */
-  possibleMoves(index) {
-    let matrixCord = convertToMatrixCoord(index);
-    let validMoves = [];
-    let row = matrixCord[0];
-    let column = matrixCord[1];
-
-    // Cross
-    validMoves.push([row, column + 1]);
-    validMoves.push([row, column - 1]);
-    validMoves.push([row + 1, column]);
-    validMoves.push([row - 1, column]);
-
-    // Diags
-    if (
-      (row % 2 === 0 && column % 2 === 0) ||
-      (row % 2 !== 0 && column % 2 !== 0)
-    ) {
-      validMoves.push([row + 1, column + 1]);
-      validMoves.push([row + 1, column - 1]);
-      validMoves.push([row - 1, column - 1]);
-      validMoves.push([row - 1, column + 1]);
-    }
-
-    validMoves = validMoves.map((value) => {
-      // boundary check
-      if (inBound(value[0]) && inBound(value[1]))
-        return convertToOrientation(value[0], value[1]);
-      else return -1;
-    });
-    let additionalMoves = [];
-    validMoves = validMoves.filter(function (idx) {
-      // Must be on empty place
-      if (!GutiManager.isBlank(idx)) {
-        if (GutiManager.orientation[idx] === NOT_TURN()) {
-          // Got contact with a guti of opponent
-
-          let me = rowColumnOfMat(index);
-          let opponent = rowColumnOfMat(idx);
-          if (me.col === opponent.col) {
-            // Same column
-            if (me.row < opponent.row) {
-              // My guti is below opponents guti
-              if (
-                GutiManager.isBlank(
-                  convertToOrientation(opponent.row + 1, me.col)
-                )
-              ) {
-                // valid move is above opponent
-                additionalMoves.push(
-                  convertToOrientation(opponent.row + 1, me.col)
-                );
-              }
-            } else if (me.row > opponent.row) {
-              // My guti is above opponents guti
-              if (
-                GutiManager.isBlank(
-                  convertToOrientation(opponent.row - 1, me.col)
-                )
-              ) {
-                // valid move is below opponent
-                additionalMoves.push(
-                  convertToOrientation(opponent.row - 1, me.col)
-                );
-              }
-            }
-          } else if (me.row === opponent.row) {
-            // same row
-            if (me.col > opponent.col) {
-              // Opp is in right side
-              if (
-                GutiManager.isBlank(
-                  convertToOrientation(me.row, opponent.col - 1)
-                )
-              ) {
-                additionalMoves.push(
-                  convertToOrientation(me.row, opponent.col - 1)
-                );
-              }
-            } else if (me.col < opponent.col) {
-              // Opp is in left side
-              if (
-                GutiManager.isBlank(
-                  convertToOrientation(me.row, opponent.col + 1)
-                )
-              ) {
-                additionalMoves.push(
-                  convertToOrientation(me.row, opponent.col + 1)
-                );
-              }
-            }
-          }
-
-          return false;
-        }
-      }
-
-      // Must be blank position to avoid putting on top of another GUTI
-      return GutiManager.orientation[idx] === GUTI_COLOR.BLANK ? idx : false;
-    });
-    validMoves.push(...additionalMoves);
-    return validMoves;
-  }
-
-  /**
    * If the position is blank in the given index
    * @param index
    * @returns {boolean|*}
    */
-  static isBlank(index) {
-    return GutiManager.orientation[index] !== GUTI_COLOR.BLANK ? false : index;
-  }
-
   flipTurn() {
     TURN =
       TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
@@ -254,7 +143,7 @@ class GutiManager {
    */
   showValidMoves(index) {
     this.clearSuggestions();
-    for (let validMove of this.possibleMoves(index)) {
+    for (let validMove of possibleMoves(GutiManager.orientation, index)) {
       GutiManager.orientation[validMove] = GUTI_COLOR.VALID;
     }
   }
@@ -309,6 +198,10 @@ class GutiManager {
   updateScore(green, pink) {
     console.log(green, pink);
   }
+}
+
+export function isBlank(index) {
+  return GutiManager.orientation[index] !== GUTI_COLOR.BLANK ? false : index;
 }
 
 export default new GutiManager();
