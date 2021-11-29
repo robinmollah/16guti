@@ -3,24 +3,26 @@ import io from "socket.io-client";
 let ss_initialized = false;
 let ioClient4SS;
 
-export function getSocket(){
-  if(ss_initialized){
+export function getSocket() {
+  if (ss_initialized) {
     return ioClient4SS;
   }
   ss_initialized = true;
 
   ioClient4SS = io("http://127.0.0.1:8305", {
-    path: '/socket'
+    path: "/socket",
   });
 
   ioClient4SS.on("message", function (message) {
-    console.log(
-      `Message received from server(${ioClient4SS.id}):  ${message}`
-    );
+    console.log(`Message received from server(${ioClient4SS.id}):  ${message}`);
   });
 
   ioClient4SS.on("connect", function () {
     console.log(`5. ON Connect Event: ----ioClient4SS.id:  ${ioClient4SS.id}`);
+    toast_alert("Connected to server", {
+      color: "green",
+      timeout: 1500,
+    });
   });
 
   ioClient4SS.on("yourTurn", function (data) {
@@ -39,6 +41,9 @@ export function getSocket(){
 
   ioClient4SS.on("connect_error", function (error) {
     console.log(`connect_error: ${error}`);
+    toast_alert(
+      `Server is not available. Please try again later. ${error.type}`
+    );
   });
 
   ioClient4SS.on("connect_timeout", function (message) {
