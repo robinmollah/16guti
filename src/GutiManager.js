@@ -92,7 +92,7 @@ class GutiManager {
           value: TURN,
           src: GutiManager.picked,
           dest: guti.i,
-          room: "ROOM_NAME",
+          room: this.room_name,
         });
         this.killHandler(guti);
         GutiManager.picked = null;
@@ -205,6 +205,14 @@ class GutiManager {
 
   updateScore(green, pink) {
     console.log(green, pink);
+  }
+
+  setPartnerId(partner_id) {
+    this.partner_socket_id = partner_id;
+  }
+
+  setRoomName(room_name) {
+    this.room_name = room_name;
   }
 }
 

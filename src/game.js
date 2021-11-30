@@ -7,8 +7,10 @@ import { getSocket } from "./socket";
 /**
  *
  * @param {'pass_n_play'|'vs_computer'|'online'|'with_friends'} type
+ * @param {String} partner_id
+ * @param {String} room_name
  */
-export function initiateGame(type) {
+export function initiateGame(type, partner_id, room_name) {
   const config = {
     type: Phaser.AUTO,
     parent: "phaser-example",
@@ -53,6 +55,8 @@ export function initiateGame(type) {
       GutiManager.exportGameState();
     });
     if (type !== "pass_n_play") {
+      GutiManager.setPartnerId(partner_id);
+      GutiManager.setRoomName(room_name);
       getSocket();
     }
   }

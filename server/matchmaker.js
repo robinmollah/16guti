@@ -1,5 +1,9 @@
 let ROOM = {};
 let PLAYER_COUNT = 0;
+/**
+ *
+ * @type {{name: Socket}}
+ */
 let WAITING_ROOM = {};
 
 module.exports.enterWaitingRoom = function (name, socket) {
@@ -18,11 +22,15 @@ module.exports.createRoom = (room_name, name, socket) => {
   };
   socket.emit("ROOM_CREATED", {
     name: last_waiting_partner_name,
+    partner_id: socket.id,
+    room_name: room_name,
   });
   waiting_partner.emit("ROOM_CREATED", {
     name: name,
+    partner_id: waiting_partner.id,
+    room_name: room_name,
   });
-  console.log(Object.keys(ROOM));
+  console.log("Room details", Object.keys(ROOM));
 };
 
 module.exports.exitWaitingRoom = function (name) {
@@ -31,8 +39,11 @@ module.exports.exitWaitingRoom = function (name) {
 
 module.exports.initiate = function initiate(socket) {};
 
-module.exports.notifyPartner = function (room, object) {
+module.exports.notifyPartner = function (object) {
   // socket.emit("yourTurn", object);
+  console.log("yourTurn", object.room, ROOM[object.room]);
+  ROOM[object.room].player1.emit("yourTurn", object);
+  ROOM[object.room].player2.emit("yourTurn", object);
 };
 
 module.exports.waiting_room = WAITING_ROOM;

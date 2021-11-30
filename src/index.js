@@ -33,7 +33,7 @@ if (name && name.length > 0) {
       console.log("ROOM CREATED", obj);
       game_play.style.display = "block";
       partner_name.innerText = obj.name;
-      initiateGame("online");
+      initiateGame("online", obj.partner_id, obj.room_name);
     });
   });
 }
