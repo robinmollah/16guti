@@ -11,6 +11,7 @@ const partner_name = document.getElementById("partner-name");
 const pass_n_play = document.getElementById("pass_n_play");
 
 pass_n_play.addEventListener("click", () => {
+  prompt1.style.display = "none";
   initiateGame("pass_n_play");
 });
 

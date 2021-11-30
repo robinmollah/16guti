@@ -52,7 +52,9 @@ export function initiateGame(type) {
       console.log("Exporting");
       GutiManager.exportGameState();
     });
-    getSocket();
+    if (type !== "pass_n_play") {
+      getSocket();
+    }
   }
 
   function update() {

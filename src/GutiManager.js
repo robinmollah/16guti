@@ -1,10 +1,4 @@
 import { OFFSET_X, OFFSET_Y } from "./BoardRenderer";
-import {
-  convertToMatrixCoord,
-  convertToOrientation,
-  inBound,
-  rowColumnOfMat,
-} from "./Validity";
 import { getSocket } from "./socket";
 import { LINE_LENGTH } from "./index";
 import { possibleMoves } from "./PossibleMove";
@@ -75,30 +69,44 @@ class GutiManager {
       guti.i = i;
       // FIXME a lot of interactive is being set, find a way to solve this memory leak
       if (guti.color === TURN) {
-        circle.setInteractive().once("pointerdown", () => {
-          if (guti.color === TURN) {
-            this.showValidMoves(guti.i, this.getGutiOrientation());
-            GutiManager.picked = guti.i;
-            GutiManager.update = false;
-          }
-        });
+        this.addPickUpEvent(circle, guti);
       } else if (guti.color === GUTI_COLOR.VALID) {
-        circle.setInteractive().once("pointerdown", () => {
-          this.moveGuti(GutiManager.picked, guti.i);
-          getSocket().emit("nextTurn", {
-            value: TURN,
-            src: GutiManager.picked,
-            dest: guti.i,
-            room: "ROOM_NAME",
-          });
-          this.killHandler(guti);
-          GutiManager.picked = null;
-          this.flipTurn();
-          GutiManager.update = false;
-        });
+        this.addPickUpEvent(circle, guti, "VALID");
       }
       GutiManager.objects[i] = circle;
       i++;
+    }
+  }
+
+  /**
+   *
+   * @param circle
+   * @param guti
+   * @param guti_type "player1" or "VALID"
+   */
+  addPickUpEvent(circle, guti, guti_type) {
+    if (guti_type === "VALID") {
+      circle.setInteractive().once("pointerdown", () => {
+        this.moveGuti(GutiManager.picked, guti.i);
+        getSocket().emit("nextTurn", {
+          value: TURN,
+          src: GutiManager.picked,
+          dest: guti.i,
+          room: "ROOM_NAME",
+        });
+        this.killHandler(guti);
+        GutiManager.picked = null;
+        this.flipTurn();
+        GutiManager.update = false;
+      });
+    } else {
+      circle.setInteractive().once("pointerdown", () => {
+        if (guti.color === TURN) {
+          this.showValidMoves(guti.i, this.getGutiOrientation());
+          GutiManager.picked = guti.i;
+          GutiManager.update = false;
+        }
+      });
     }
   }
 
