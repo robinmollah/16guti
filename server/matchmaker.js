@@ -39,12 +39,20 @@ module.exports.exitWaitingRoom = function (name) {
 
 module.exports.initiate = function initiate(socket) {};
 
-module.exports.notifyPartner = function (object) {
+module.exports.notifyPartner = function (object, socket_id) {
   // socket.emit("yourTurn", object);
-  console.log("yourTurn", object.room, ROOM[object.room]);
-  ROOM[object.room].player1.emit("yourTurn", object);
-  ROOM[object.room].player2.emit("yourTurn", object);
+  getPartnersSocket(object.room, socket_id).emit("yourTurn", object);
 };
 
+function getPartnersSocket(room, own_socket_id) {
+  let player1socket = ROOM[room].player1;
+  let player2socket = ROOM[room].player2;
+  console.log("socket ids", player2socket.id, player1socket.id, own_socket_id);
+  if (player1socket.id === own_socket_id) {
+    return player2socket;
+  } else {
+    return player1socket;
+  }
+}
 module.exports.waiting_room = WAITING_ROOM;
 module.exports.room = ROOM;
