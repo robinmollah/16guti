@@ -48,6 +48,10 @@ class GutiManager {
     this.clearSuggestions();
   }
 
+  update() {
+    GutiManager.update = false;
+  }
+
   draw(board) {
     if (GutiManager.update) return;
     // Add turn text

@@ -34,6 +34,7 @@ module.exports.createRoom = (room_name, name, socket) => {
 };
 
 module.exports.exitWaitingRoom = function (name) {
+  console.log("exiting waiting room ", name);
   delete WAITING_ROOM[name];
 };
 

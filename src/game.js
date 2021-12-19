@@ -54,10 +54,19 @@ export function initiateGame(type, partner_id, room_name) {
       console.log("Exporting");
       GutiManager.exportGameState();
     });
+    let current = this;
     if (type !== "pass_n_play") {
       GutiManager.setPartnerId(partner_id);
       GutiManager.setRoomName(room_name);
-      getSocket();
+      let socket = getSocket();
+      window.GutiManager = GutiManager;
+      socket.on("yourTurn", (data) => {
+        console.log("yourTurn: " + JSON.stringify(data), GutiManager);
+        GutiManager.moveGuti(data.src, data.dest);
+        GutiManager.killHandler(data.src, data.dest);
+        GutiManager.flipTurn();
+        GutiManager.update();
+      });
     }
   }
 

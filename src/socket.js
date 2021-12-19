@@ -25,16 +25,6 @@ export function getSocket() {
     });
   });
 
-  ioClient4SS.on("yourTurn", function (data) {
-    // if (data.room !== "ROOM_NAME") return;
-    console.log("yourTurn: " + JSON.stringify(data));
-    // window.gutiManager.moveGuti(data.src, data.dest);
-    // window.gutiManager.killHandler(data.src, data.dest);
-    // window.gutiManager.flipTurn();
-    // GutiManager.update = false;
-    // window.gutiManager.draw();
-  });
-
   ioClient4SS.on("disconnect", (reason) => {
     console.log(`ioClient4SS: disconnect: ${reason}`);
   });
