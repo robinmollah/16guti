@@ -10,7 +10,7 @@ export function rowColumnOfMat(index){
 	return {
 		"row": Math.floor(index/5),
 		"col": index % 5
-	}
+	};
 }
 
 /**
