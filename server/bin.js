@@ -4,7 +4,7 @@ let fs = require("fs");
 const backdoor = require("./backdoor.js");
 const apiRouter = require("./routes/api");
 let app = express();
-const PORT = 3000;
+const PORT = 3050;
 
 app.use(express.json());
 app.set("view engine", "ejs");
