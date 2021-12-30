@@ -102,7 +102,7 @@ class GutiManager {
 					dest: guti.i,
 					room: this.room_name,
 				});
-				this.killHandler(guti);
+				this.killHandler(GutiManager.picked, guti.i);
 				GutiManager.picked = null;
 				this.flipTurn();
 				GutiManager.update = false;
@@ -191,9 +191,9 @@ class GutiManager {
 	// eslint-disable-next-line no-unused-vars
 	importGameState(filename) {}
 
-	killHandler(guti) {
-		const diff = Math.abs(GutiManager.picked - guti.i);
-		const min = Math.min(GutiManager.picked, guti.i);
+	killHandler(src, dst) {
+		const diff = Math.abs(src - dst);
+		const min = Math.min(src, dst);
 
 		if (
 			diff === 10 || // row side kill
