@@ -59,7 +59,7 @@ class GutiManager {
 		if (GutiManager.update) return;
 		// Add turn text
 		board.add.text(OFFSET_X, 50, "TURN", {
-			fill: TURN === GUTI_COLOR.PLAYER1 ? "green" : "red",
+			backgroundColor: `#${TURN.toString(16)}`
 		});
 
 		GutiManager.update = true;

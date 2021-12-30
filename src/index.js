@@ -9,6 +9,7 @@ const waiting = document.getElementById("waiting");
 const game_play = document.getElementById("game_play");
 const partner_name = document.getElementById("partner-name");
 const pass_n_play = document.getElementById("pass_n_play");
+// eslint-disable-next-line no-undef
 console.log("process.env", PROCESS_ENV.NODE_ENV);
 
 pass_n_play.addEventListener("click", () => {
