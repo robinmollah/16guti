@@ -11,12 +11,13 @@ export const GUTI_COLOR = {
 };
 
 export let TURN = GUTI_COLOR.PLAYER1;
-let NOT_TURN = function () {
-	return TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
-};
-
 const GUTI_RADIUS = 12;
 
+/**
+ * @typedef {Object} GutiManager
+ * @property {Color} my_color
+ * @property {'pass_n_play'|'vs_computer'|'online'|'with_friends'} game_type
+ */
 class GutiManager {
 	constructor() {
 		this.start();
@@ -75,7 +76,7 @@ class GutiManager {
 			);
 			guti.i = i;
 			// FIXME a lot of interactive is being set, find a way to solve this memory leak
-			if (guti.color === TURN) {
+			if (guti.color === TURN && this.my_color === TURN) {
 				this.addPickUpEvent(circle, guti);
 			} else if (guti.color === GUTI_COLOR.VALID) {
 				this.addPickUpEvent(circle, guti, "VALID");
@@ -186,6 +187,8 @@ class GutiManager {
 		xmlHttp.send(JSON.stringify(game_state));
 	}
 
+	// TODO
+	// eslint-disable-next-line no-unused-vars
 	importGameState(filename) {}
 
 	killHandler(guti) {
@@ -230,6 +233,7 @@ class GutiManager {
    */
 	setMyColor(turn) {
 		this.my_color = turn ? GUTI_COLOR.PLAYER1 : GUTI_COLOR.PLAYER2;
+		document.getElementById("partner-name").style.backgroundColor = `#${this.my_color.toString(16)}`;
 	}
 
 	/**
