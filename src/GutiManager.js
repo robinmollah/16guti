@@ -28,6 +28,7 @@ class GutiManager {
 		this.my_color = null;
 		this.game_type = null;
 		this.partner_socket_id = null;
+		this.turnTextView = null;
 	}
 
 	start() {
@@ -59,9 +60,8 @@ class GutiManager {
 	draw(board) {
 		if (GutiManager.update) return;
 		// Add turn text
-		board.add.text(OFFSET_X, 50, "TURN", {
-			backgroundColor: `#${TURN.toString(16)}`
-		});
+		this.updateTurn(board);
+
 
 		GutiManager.update = true;
 		let radius = GUTI_RADIUS;
@@ -143,11 +143,6 @@ class GutiManager {
 		return gutis;
 	}
 
-	/**
-   * If the position is blank in the given index
-   * @param index
-   * @returns {boolean|*}
-   */
 	flipTurn() {
 		TURN =
       TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
@@ -241,6 +236,18 @@ class GutiManager {
    */
 	setGameType(game_type) {
 		this.game_type = game_type;
+	}
+
+	updateTurn(board) {
+		let turnText = TURN === this.my_color ? "Your Turn" : "Opponent's Turn";
+		if(!this.turnTextView){
+			this.turnTextView = board.add.text(OFFSET_X, 50, turnText, {
+				backgroundColor: `#${TURN.toString(16)}`
+			});
+		} else {
+			this.turnTextView.setText(turnText);
+			this.turnTextView.setBackgroundColor(`#${TURN.toString(16)}`);
+		}
 	}
 }
 
