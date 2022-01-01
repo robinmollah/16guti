@@ -8,7 +8,7 @@ export function getSocket() {
 		return ioClient4SS;
 	}
 	ss_initialized = true;
-	let serverAddress = PROCESS_ENV.NODE_ENV === "production" ? "https://10guti.properbd.net ": "http://127.0.0.1:8305";
+	let serverAddress = PROCESS_ENV.NODE_ENV === "production" ? "https://10guti.properbd.net": "http://127.0.0.1:8305";
 	ioClient4SS = io(serverAddress, {
 		path: "/socket",
 	});
@@ -19,6 +19,7 @@ export function getSocket() {
 
 	ioClient4SS.on("connect", function () {
 		console.log(`5. ON Connect Event: ----ioClient4SS.id:  ${ioClient4SS.id}`);
+		// eslint-disable-next-line no-undef
 		toast_alert("Connected to server", {
 			color: "green",
 			timeout: 1500,
@@ -31,6 +32,7 @@ export function getSocket() {
 
 	ioClient4SS.on("connect_error", function (error) {
 		console.log(`connect_error: ${error}`);
+		// eslint-disable-next-line no-undef
 		toast_alert(
 			`Server is not available. Please try again later. ${error.type}`
 		);
