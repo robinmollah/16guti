@@ -13,7 +13,7 @@ jobs:
       - name: Adding known_hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
       - name: Update cloud server
-        run: ssh -tt ubuntu@54.209.210.217 'cd 16guti; git pull origin non-oop; yarn; /home/ubuntu/.nvm/versions/node/v12.18.4/bin/pm2 restart 10guti'
+        run: ssh -tt ubuntu@54.209.210.217 'cd 16guti; git stash; git pull origin non-oop; yarn; /home/ubuntu/.nvm/versions/node/v12.18.4/bin/pm2 restart 10guti'
       - name: Building game
         run: ssh -tt ubuntu@54.209.210.217 'cd 16guti; yarn build'
       - name: Notify on telegram
