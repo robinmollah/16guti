@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { OFFSET_X, OFFSET_Y } from "./BoardRenderer";
 import { getLines } from "./util";
-import GutiManager, { GUTI_COLOR } from "./GutiManager";
+import GutiManager from "./GutiManager";
 import { getSocket } from "./socket";
 
 /**
@@ -73,9 +73,6 @@ export function initiateGame(type, partner_id, room_name, turn) {
 	}
 
 	function update() {
-		// Phaser.Geom.Line.Rotate(line, 0.02);
-		// graphics.clear();
-		// graphics.strokeLineShape(line);
 		GutiManager.draw(this);
 	}
 }

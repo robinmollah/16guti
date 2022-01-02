@@ -2,6 +2,7 @@ import { OFFSET_X, OFFSET_Y } from "./BoardRenderer";
 import { getSocket } from "./socket";
 import { LINE_LENGTH } from "./index";
 import { possibleMoves } from "./PossibleMove";
+import { GAME_TYPE } from "./consts/GAME_TYPE";
 
 export const GUTI_COLOR = {
 	PLAYER1: 0x3d5afe,
@@ -62,7 +63,6 @@ class GutiManager {
 		// Add turn text
 		this.updateTurn(board);
 
-
 		GutiManager.update = true;
 		let radius = GUTI_RADIUS;
 		let i = 0;
@@ -76,8 +76,12 @@ class GutiManager {
 			);
 			guti.i = i;
 			// FIXME a lot of interactive is being set, find a way to solve this memory leak
-			if (guti.color === TURN && this.my_color === TURN) {
-				this.addPickUpEvent(circle, guti);
+			if (guti.color === TURN) {
+				if (
+					this.game_type === GAME_TYPE.PASS_N_PLAY ||
+          (this.game_type === GAME_TYPE.ONLINE && this.my_color === TURN)) {
+					this.addPickUpEvent(circle, guti);
+				}
 			} else if (guti.color === GUTI_COLOR.VALID) {
 				this.addPickUpEvent(circle, guti, "VALID");
 			}
@@ -228,7 +232,9 @@ class GutiManager {
    */
 	setMyColor(turn) {
 		this.my_color = turn ? GUTI_COLOR.PLAYER1 : GUTI_COLOR.PLAYER2;
-		document.getElementById("partner-name").style.backgroundColor = `#${this.my_color.toString(16)}`;
+		document.getElementById(
+			"partner-name"
+		).style.backgroundColor = `#${this.my_color.toString(16)}`;
 	}
 
 	/**
@@ -240,9 +246,9 @@ class GutiManager {
 
 	updateTurn(board) {
 		let turnText = TURN === this.my_color ? "Your Turn" : "Opponent's Turn";
-		if(!this.turnTextView){
+		if (!this.turnTextView) {
 			this.turnTextView = board.add.text(OFFSET_X, 50, turnText, {
-				backgroundColor: `#${TURN.toString(16)}`
+				backgroundColor: `#${TURN.toString(16)}`,
 			});
 		} else {
 			this.turnTextView.setText(turnText);
