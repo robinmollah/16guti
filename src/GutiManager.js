@@ -112,12 +112,13 @@ class GutiManager {
 			circle.setInteractive().once("pointerdown", () => {
 				GutiManager.objects[GutiManager.picked].destroy();
 				this.moveGuti(GutiManager.picked, guti.i);
-				getSocket().emit("nextTurn", {
-					value: TURN,
-					src: GutiManager.picked,
-					dest: guti.i,
-					room: this.room_name,
-				});
+				if(this.game_type === GAME_TYPE.ONLINE)
+					getSocket().emit("nextTurn", {
+						value: TURN,
+						src: GutiManager.picked,
+						dest: guti.i,
+						room: this.room_name,
+					});
 				this.killHandler(GutiManager.picked, guti.i);
 				GutiManager.picked = null;
 				this.flipTurn();
