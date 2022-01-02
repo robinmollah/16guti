@@ -25,6 +25,7 @@ export function initiateGame(type, partner_id, room_name, turn) {
 		backgroundColor: "#b76f20",
 	};
 
+	// eslint-disable-next-line no-unused-vars
 	const game = new Phaser.Game(config);
 
 	function preload() {
@@ -63,7 +64,7 @@ export function initiateGame(type, partner_id, room_name, turn) {
 			let socket = getSocket();
 			window.GutiManager = GutiManager;
 			socket.on("yourTurn", (data) => {
-				console.log("yourTurn: " + JSON.stringify(data), GutiManager);
+				console.log("yourTurn: ", data);
 				GutiManager.moveGuti(data.src, data.dest);
 				GutiManager.killHandler(data.src, data.dest);
 				GutiManager.flipTurn();

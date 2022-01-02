@@ -2,12 +2,13 @@ import { OFFSET_X, OFFSET_Y } from "./BoardRenderer";
 import { getSocket } from "./socket";
 import { LINE_LENGTH } from "./index";
 import { possibleMoves } from "./PossibleMove";
+import Phaser from "phaser";
 import { GAME_TYPE } from "./consts/GAME_TYPE";
 
 export const GUTI_COLOR = {
 	PLAYER1: 0x3d5afe,
 	PLAYER2: 0xf73378,
-	BLANK: 0x111111,
+	BLANK: 0xdddddd,
 	VALID: 0xcc7a00,
 };
 
@@ -30,6 +31,7 @@ class GutiManager {
 		this.game_type = null;
 		this.partner_socket_id = null;
 		this.turnTextView = null;
+		this.gutiGameObjects = [];
 	}
 
 	start() {
@@ -42,7 +44,7 @@ class GutiManager {
 
 	/**
    * 1, 0, -1 representing the sequence of gutis
-   * @returns {*}
+   * @returns {GUTI_COLOR[]}
    */
 	getGutiOrientation() {
 		return GutiManager.orientation;
@@ -60,20 +62,29 @@ class GutiManager {
 
 	draw(board) {
 		if (GutiManager.update) return;
-		// Add turn text
 		this.updateTurn(board);
 
 		GutiManager.update = true;
 		let radius = GUTI_RADIUS;
 		let i = 0;
 		for (let guti of this.getGutiPositions(LINE_LENGTH / 4)) {
-			let circle;
-			circle = board.add.circle(
+			let circle = board.add.circle(
 				guti.x,
 				guti.y,
-				radius,
-				i === GutiManager.picked ? 0xdd0000 : guti.color
+				i === GutiManager.picked ? radius * 1.3 : radius,
+				guti.color === GUTI_COLOR.VALID ? TURN : guti.color,
 			);
+			if(guti.color === GUTI_COLOR.VALID) {
+				circle.alpha = 0.3;
+				board.tweens.add({
+					targets: circle,
+					alpha: 1,
+					duration: 200,
+					ease: Phaser.Math.Easing.Bounce.InOut,
+					repeat: -1,
+					yoyo: true,
+				});
+			}
 			guti.i = i;
 			// FIXME a lot of interactive is being set, find a way to solve this memory leak
 			if (guti.color === TURN) {
@@ -94,11 +105,12 @@ class GutiManager {
    *
    * @param circle
    * @param guti
-   * @param guti_type "player1" or "VALID"
+   * @param {"player1" | "VALID" | null}guti_type
    */
-	addPickUpEvent(circle, guti, guti_type) {
+	addPickUpEvent(circle, guti, guti_type= null) {
 		if (guti_type === "VALID") {
 			circle.setInteractive().once("pointerdown", () => {
+				GutiManager.objects[GutiManager.picked].destroy();
 				this.moveGuti(GutiManager.picked, guti.i);
 				getSocket().emit("nextTurn", {
 					value: TURN,
@@ -113,6 +125,8 @@ class GutiManager {
 			});
 		} else {
 			circle.setInteractive().once("pointerdown", () => {
+				if(GutiManager.picked)
+					GutiManager.objects[GutiManager.picked].destroy();
 				if (guti.color === TURN) {
 					this.showValidMoves(guti.i, this.getGutiOrientation());
 					GutiManager.picked = guti.i;
@@ -125,7 +139,7 @@ class GutiManager {
 	/**
    * Get geometric position of gutis
    * @param offset
-   * @returns {[]}
+   * @returns {Array.<{x: Number, y: Number, color: Number}>}
    */
 	getGutiPositions(offset = 100) {
 		let gutis = [];
