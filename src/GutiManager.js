@@ -266,9 +266,9 @@ class GutiManager {
 	updateTurn(board) {
 		let turnText = TURN === this.my_color ? "Your Turn" : "Opponent's Turn";
 		if (!this.turnTextView) {
-			this.turnTextView = board.add.text(OFFSET_X, 50, turnText, {
-				backgroundColor: `#${TURN.toString(16)}`,
-			});
+			// this.turnTextView = board.add.text(OFFSET_X, 50, turnText, {
+			// 	backgroundColor: `#${TURN.toString(16)}`,
+			// });
 		} else {
 			this.turnTextView.setText(turnText);
 			this.turnTextView.setBackgroundColor(`#${TURN.toString(16)}`);
@@ -284,7 +284,11 @@ class GutiManager {
 	}
 
 	play(name){
-		this.sound_effects[name].play();
+		try {
+			this.sound_effects[name].play();
+		} catch (e) {
+			console.error("Error playing audio ", e);
+		}
 	}
 }
 

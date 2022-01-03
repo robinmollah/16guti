@@ -12,12 +12,12 @@ import { getSocket } from "./socket";
  * @param {0 | 1}turn
  */
 export function initiateGame(type, partner_id, room_name, turn) {
-	const WIDTH = 800;
+	const WIDTH = window.innerWidth;
 	const config = {
 		type: Phaser.AUTO,
 		parent: "phaser-example",
-		width: WIDTH,
-		height: WIDTH * 1.33,
+		width: WIDTH * 0.9,
+		height: WIDTH,
 		scene: {
 			preload: preload,
 			create: create,
@@ -51,13 +51,14 @@ export function initiateGame(type, partner_id, room_name, turn) {
 		}
 
 		// export button
+		/*
 		const exportButton = this.add.text(config.width - 95, 50, "export", {
 			fill: "#0f0",
 		});
 		exportButton.setInteractive().on("pointerdown", () => {
 			console.log("Exporting");
 			GutiManager.exportGameState();
-		});
+		});	*/
 		if (type !== "pass_n_play") {
 			GutiManager.setPartnerId(partner_id);
 			GutiManager.setRoomName(room_name);

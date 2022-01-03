@@ -1,2 +1,2 @@
-export let OFFSET_X = 100;
-export let OFFSET_Y = 170;
+export let OFFSET_X = window.innerWidth / 10;
+export let OFFSET_Y = window.innerWidth / 20;

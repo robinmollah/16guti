@@ -1,7 +1,7 @@
 import { initiateGame } from "./game";
 import { getSocket } from "./socket";
 // import logoImg from "./assets/logo.png";
-export const LINE_LENGTH = 450;
+export let LINE_LENGTH = window.innerWidth / window.innerHeight < 1.12 ? window.innerWidth * 0.7 : window.innerHeight * 0.7;
 document.body.style.display="block";
 
 const submit = document.getElementById("submit");
