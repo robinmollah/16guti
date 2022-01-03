@@ -12,11 +12,12 @@ import { getSocket } from "./socket";
  * @param {0 | 1}turn
  */
 export function initiateGame(type, partner_id, room_name, turn) {
+	const WIDTH = 800;
 	const config = {
 		type: Phaser.AUTO,
 		parent: "phaser-example",
-		width: 600,
-		height: 800,
+		width: WIDTH,
+		height: WIDTH * 1.33,
 		scene: {
 			preload: preload,
 			create: create,

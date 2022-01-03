@@ -44,7 +44,7 @@ if (name && name.length > 0) {
 // dev.js
 
 // eslint-disable-next-line no-undef
-if(PROCESS_ENV.NODE_ENV.toLowerCase() === "development"){
+if(PROCESS_ENV.NODE_ENV.toLowerCase() === "developments"){
 	// eslint-disable-next-line no-undef
 	$(document).ready(function() { _fillAndGo(); });
 }

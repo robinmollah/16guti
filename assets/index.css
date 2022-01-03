@@ -24,3 +24,24 @@ input:hover, button:hover {
 h2, h3 {
     color: white;
 }
+
+#turn_indicator, .turn_indicator_bg {
+    font-family: "Roboto Light", monospace;
+    background-color: #1f2f8673;
+    /*color: #f73378;*/
+    color: white;
+    padding: 12px;
+    text-align: center;
+    margin: auto;
+    width: 30%;
+}
+
+.turn_indicator_bg {
+    color: red;
+    background: red;
+    position: relative;
+    bottom: 2.5em;
+    z-index: -1;
+    width: 0px;
+    padding: 0px;
+}
