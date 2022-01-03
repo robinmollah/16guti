@@ -29,7 +29,8 @@ export function initiateGame(type, partner_id, room_name, turn) {
 	const game = new Phaser.Game(config);
 
 	function preload() {
-		// this.load.image("logo", logoImg);
+		this.load.audio("move_guti", "audio/click_003.mp3");
+		this.load.audio("kill_guti", "audio/glass_hit_shatter_light_negative.mp3");
 	}
 
 	function create() {
@@ -71,6 +72,8 @@ export function initiateGame(type, partner_id, room_name, turn) {
 				GutiManager.update();
 			});
 		}
+		GutiManager.addSoundEffect("move_guti", this.sound.add("move_guti"));
+		GutiManager.addSoundEffect("kill_guti", this.sound.add("kill_guti"));
 	}
 
 	function update() {

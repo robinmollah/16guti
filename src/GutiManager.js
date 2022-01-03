@@ -19,6 +19,7 @@ const GUTI_RADIUS = 12;
  * @typedef {Object} GutiManager
  * @property {Color} my_color
  * @property {'pass_n_play'|'vs_computer'|'online'|'with_friends'} game_type
+ * @property {name: String, value: Phaser.Sound.BaseSound} sound_effects
  */
 class GutiManager {
 	constructor() {
@@ -32,6 +33,7 @@ class GutiManager {
 		this.partner_socket_id = null;
 		this.turnTextView = null;
 		this.gutiGameObjects = [];
+		this.sound_effects = {};
 	}
 
 	start() {
@@ -53,6 +55,7 @@ class GutiManager {
 	moveGuti(source, dest) {
 		GutiManager.orientation[dest] = GutiManager.orientation[source];
 		GutiManager.orientation[source] = GUTI_COLOR.BLANK;
+		this.play("move_guti");
 		this.clearSuggestions();
 	}
 
@@ -229,6 +232,7 @@ class GutiManager {
 
 	updateScore(green, pink) {
 		console.log(green, pink);
+		this.play("kill_guti");
 	}
 
 	setPartnerId(partner_id) {
@@ -269,6 +273,18 @@ class GutiManager {
 			this.turnTextView.setText(turnText);
 			this.turnTextView.setBackgroundColor(`#${TURN.toString(16)}`);
 		}
+	}
+
+	/**
+	 * @param {string} name
+	 * @param {Phaser.Sound.BaseSound} audio
+	 */
+	addSoundEffect(name, audio){
+		this.sound_effects[name] = audio;
+	}
+
+	play(name){
+		this.sound_effects[name].play();
 	}
 }
 

@@ -1,6 +1,5 @@
 import { initiateGame } from "./game";
 import { getSocket } from "./socket";
-import { GUTI_COLOR } from "./GutiManager";
 // import logoImg from "./assets/logo.png";
 export const LINE_LENGTH = 450;
 document.body.style.display="block";
