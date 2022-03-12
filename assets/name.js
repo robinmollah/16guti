@@ -1,4 +1,4 @@
-let turn_indicator_bug = document.getElementById("turn_indicator_bg");
+let turn_indicator_bg = document.getElementById("turn_indicator_bg");
 let turn_indicator = document.getElementById("turn_indicator");
 
 /**
@@ -7,12 +7,15 @@ let turn_indicator = document.getElementById("turn_indicator");
  */
 // eslint-disable-next-line no-unused-vars
 function setTurnProgress(value){
-	turn_indicator_bug.style.width = (29 * value) + "%";
+	turn_indicator_bg.style.width = (29 * value) + "%";
 }
 
 let interval;
+
+const TEXT_YOUR_TURN = "Your Turn";
+const TEXT_OPPONENTS_TURN = "Opponents Turn";
 function startTurnCountdown(){
-	turn_indicator_bug.style.padding= "1em";
+	turn_indicator_bg.style.padding= "1em";
 	let i = 0;
 	clearInterval(interval);
 	interval = setInterval(() => {
@@ -23,5 +26,5 @@ function startTurnCountdown(){
 }
 
 function flipTurnText(){
-	turn_indicator.innerText = turn_indicator.innerText === "Your Turn" ? "Opponents Turn" : "Your Turn";
+	turn_indicator.innerText = turn_indicator.innerText === TEXT_YOUR_TURN ? TEXT_OPPONENTS_TURN : TEXT_YOUR_TURN;
 }

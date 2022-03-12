@@ -16,8 +16,8 @@ export function initiateGame(type, partner_id, room_name, turn) {
 	const config = {
 		type: Phaser.AUTO,
 		parent: "phaser-example",
-		width: WIDTH * 0.9,
-		height: WIDTH,
+		width: WIDTH * 0.99,
+		height: window.innerHeight,
 		scene: {
 			preload: preload,
 			create: create,

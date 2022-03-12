@@ -8,7 +8,7 @@ export function getSocket() {
 		return ioClient4SS;
 	}
 	ss_initialized = true;
-	let serverAddress = PROCESS_ENV.NODE_ENV === "production" ? "https://10guti.properbd.net": "http://127.0.0.1:8305";
+	let serverAddress = PROCESS_ENV.NODE_ENV === "production" ? "https://10guti.properbd.net": "http://192.168.1.125:8305";
 	ioClient4SS = io(serverAddress, {
 		path: "/socket",
 	});

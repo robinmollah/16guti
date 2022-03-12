@@ -13,7 +13,7 @@ export const GUTI_COLOR = {
 };
 
 export let TURN = GUTI_COLOR.PLAYER1;
-const GUTI_RADIUS = 12;
+const GUTI_RADIUS = window.innerWidth * 0.027;
 
 /**
  * @typedef {Object} GutiManager
@@ -42,6 +42,7 @@ class GutiManager {
 			.fill(GUTI_COLOR.BLANK, 10, 15)
 			.fill(GUTI_COLOR.PLAYER1, 15, 25);
 		GutiManager.objects = { ...GutiManager.orientation };
+		window.turn_indicator.innerText = this.isMyTurn() ? window.TEXT_YOUR_TURN : window.TEXT_OPPONENTS_TURN;
 	}
 
 	/**
@@ -113,6 +114,8 @@ class GutiManager {
 	addPickUpEvent(circle, guti, guti_type= null) {
 		if (guti_type === "VALID") {
 			circle.setInteractive().once("pointerdown", () => {
+				window.startTurnCountdown();
+				window.flipTurnText();
 				GutiManager.objects[GutiManager.picked].destroy();
 				this.moveGuti(GutiManager.picked, guti.i);
 				if(this.game_type === GAME_TYPE.ONLINE)
@@ -168,6 +171,10 @@ class GutiManager {
 	flipTurn() {
 		TURN =
       TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
+	}
+
+	isMyTurn(){
+		return this.my_color === TURN;
 	}
 
 	/**
@@ -266,9 +273,9 @@ class GutiManager {
 	updateTurn(board) {
 		let turnText = TURN === this.my_color ? "Your Turn" : "Opponent's Turn";
 		if (!this.turnTextView) {
-			// this.turnTextView = board.add.text(OFFSET_X, 50, turnText, {
-			// 	backgroundColor: `#${TURN.toString(16)}`,
-			// });
+			this.turnTextView = board.add.text(LINE_LENGTH * 0.6, window.innerWidth * 0.85, turnText, {
+				backgroundColor: `#${TURN.toString(16)}`,
+			});
 		} else {
 			this.turnTextView.setText(turnText);
 			this.turnTextView.setBackgroundColor(`#${TURN.toString(16)}`);

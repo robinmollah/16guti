@@ -1,7 +1,8 @@
 import { initiateGame } from "./game";
 import { getSocket } from "./socket";
 // import logoImg from "./assets/logo.png";
-export let LINE_LENGTH = window.innerWidth / window.innerHeight < 1.12 ? window.innerWidth * 0.7 : window.innerHeight * 0.7;
+const LINE_FACTOR = 0.94;
+export let LINE_LENGTH = window.innerWidth / window.innerHeight < 1.12 ? window.innerWidth * LINE_FACTOR : window.innerHeight * LINE_FACTOR;
 document.body.style.display="block";
 
 const submit = document.getElementById("submit");
@@ -44,7 +45,7 @@ if (name && name.length > 0) {
 // dev.js
 
 // eslint-disable-next-line no-undef
-if(PROCESS_ENV.NODE_ENV.toLowerCase() === "developments"){
+if(PROCESS_ENV.NODE_ENV.toLowerCase() === "development"){
 	// eslint-disable-next-line no-undef
 	$(document).ready(function() { _fillAndGo(); });
 }

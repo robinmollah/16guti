@@ -44,4 +44,9 @@ h2, h3 {
     z-index: -1;
     width: 0px;
     padding: 0px;
+    display: none;
+}
+
+#turn_indicator {
+    display: none;
 }
