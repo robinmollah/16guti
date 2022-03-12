@@ -34,6 +34,7 @@ class GutiManager {
 		this.turnTextView = null;
 		this.gutiGameObjects = [];
 		this.sound_effects = {};
+		this.first_move_done = false;
 	}
 
 	start() {
@@ -152,7 +153,14 @@ class GutiManager {
 		let gutis = [];
 		let row = 0;
 		let column = 0;
-		for (let guti of this.getGutiOrientation()) {
+		let orientation;
+		if(!this.first_move_done) {
+			orientation = this.my_color === GUTI_COLOR.PLAYER1 ? this.getGutiOrientation() : this.getGutiOrientation().reverse();
+			this.first_move_done = true;
+		} else {
+			orientation = this.getGutiOrientation();
+		}
+		for (let guti of orientation) {
 			gutis.push({
 				x: OFFSET_X + column * offset,
 				y: OFFSET_Y + row * offset,
@@ -273,9 +281,11 @@ class GutiManager {
 	updateTurn(board) {
 		let turnText = TURN === this.my_color ? "Your Turn" : "Opponent's Turn";
 		if (!this.turnTextView) {
-			this.turnTextView = board.add.text(LINE_LENGTH * 0.6, window.innerWidth * 0.85, turnText, {
+			this.turnTextView = board.add.text(LINE_LENGTH * 0.5, window.innerHeight * 0.1, turnText, {
 				backgroundColor: `#${TURN.toString(16)}`,
 			});
+			this.turnTextView.setFontSize(60);
+			this.turnTextView.setOrigin(0.5);
 		} else {
 			this.turnTextView.setText(turnText);
 			this.turnTextView.setBackgroundColor(`#${TURN.toString(16)}`);

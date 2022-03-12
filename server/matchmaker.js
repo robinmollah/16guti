@@ -44,6 +44,8 @@ module.exports.initiate = function initiate(socket) {};
 
 module.exports.notifyPartner = function (object, socket_id) {
 	// socket.emit("yourTurn", object);
+	object.src = 24 - object.src;
+	object.dest = 24 - object.dest;
 	getPartnersSocket(object.room, socket_id).emit("yourTurn", object);
 };
 
