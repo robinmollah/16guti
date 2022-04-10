@@ -50,15 +50,6 @@ export function initiateGame(type, partner_id, room_name, turn) {
 			boardLines.strokeLineShape(line);
 		}
 
-		// export button
-		/*
-		const exportButton = this.add.text(config.width - 95, 50, "export", {
-			fill: "#0f0",
-		});
-		exportButton.setInteractive().on("pointerdown", () => {
-			console.log("Exporting");
-			GutiManager.exportGameState();
-		});	*/
 		if (type !== "pass_n_play") {
 			GutiManager.setPartnerId(partner_id);
 			GutiManager.setRoomName(room_name);

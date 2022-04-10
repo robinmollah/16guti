@@ -279,7 +279,13 @@ class GutiManager {
 	}
 
 	updateTurn(board) {
-		let turnText = TURN === this.my_color ? "Your Turn" : "Opponent's Turn";
+		let turnText;
+		if(this.my_color){
+			turnText = TURN === this.my_color ? "Your Turn" : "Opponent's Turn";
+		} else {
+			turnText = TURN === GUTI_COLOR.PLAYER1 ? "Blue's Turn" : "Pink's Turn";
+		}
+		console.log("Turn", TURN, this.my_color, turnText);
 		if (!this.turnTextView) {
 			this.turnTextView = board.add.text(LINE_LENGTH * 0.5, window.innerHeight * 0.1, turnText, {
 				backgroundColor: `#${TURN.toString(16)}`,

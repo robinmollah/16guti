@@ -1,7 +1,7 @@
 const matchmaker = require("./matchmaker");
 const PORT = 8305;
 
-function startBackDoorServer(sslOptions) {
+function startBackDoorServer() {
 	let backdoorClients = new Map();
 	let app_backdoor = require("express")();
 	let http_backdoor = require("http").Server(app_backdoor);
