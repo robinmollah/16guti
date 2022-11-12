@@ -7,7 +7,8 @@
     "build": "webpack --config webpack/prod.js ",
     "start": "webpack-dev-server --config webpack/base.js",
     "server": "nodemon server/bin.js",
-    "start-all": "yarn start & yarn server"
+    "start-all": "yarn start & yarn server",
+    "deploy": "gsutil -m cp -r ./dist/* gs://doshguti"
   },
   "repository": {
     "type": "git",

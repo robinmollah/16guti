@@ -14,4 +14,5 @@ variable "bucket_location" {
 
 variable "project_id" {
   description = "e.g. robinsajin"
+  default = "robinsajin"
 }
