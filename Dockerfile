@@ -9,4 +9,5 @@ COPY . .
 
 
 EXPOSE 3050
+EXPOSE 8305
 CMD [ "node", "server/bin.js" ]
