@@ -1,0 +1,7 @@
+version: "3"
+services:
+  doshguti:
+    image: 10guti
+    ports:
+      - "3050:3050"
+      - "8305:8305"
