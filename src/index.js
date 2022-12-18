@@ -32,11 +32,22 @@ if (name && name.length > 0) {
 		getSocket().emit("initiate", {
 			name: name.value,
 		});
+		getSocket().on("ENTERED_WAITING_ROOM", (obj) => {
+			console.log("ENTERED_WAITING_ROOM", obj);
+			window.history.pushState(
+				{pageTitle: "Room " + obj.room_name},
+				"",
+				"/room/" + obj.room_name);
+		});
 		getSocket().on("ROOM_CREATED", (obj) => {
 			waiting.style.display = "none";
 			console.log("ROOM CREATED", obj);
 			game_play.style.display = "block";
 			partner_name.innerText = obj.name;
+			window.history.pushState(
+				{pageTitle: "Room " + obj.room_name},
+				"",
+				"/room/" + obj.room_name);
 			initiateGame("online", obj.partner_id, obj.room_name, obj.turn);
 		});
 	});

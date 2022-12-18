@@ -6,22 +6,44 @@ let PLAYER_COUNT = 0;
  */
 let WAITING_ROOM = {};
 
-module.exports.enterWaitingRoom = function (name, socket) {
+module.exports.enterWaitingRoom = function (room_name, name, socket) {
 	WAITING_ROOM[name] = socket;
-
+	socket.emit("ENTERED_WAITING_ROOM", {
+		room_name: room_name,
+		player_name: name
+	});
+	ROOM[room_name] = {
+		player1: socket,
+		player1_name: name,
+		waiting: true
+	};
 	console.log("WAITING ROOM", Object.keys(WAITING_ROOM), "ROOM", ROOM.length);
 };
 
+function getWaitingRoom(){
+	let keys = Object.keys(ROOM);
+	for(let i = 0; i < keys.length; i++){
+		let room_name = keys[i];
+		let room = ROOM[room_name];
+		if(room.waiting){
+			room.waiting = false;
+			return room;
+		}
+	}
+}
+
 module.exports.createRoom = (room_name, name, socket) => {
-	let last_waiting_partner_name = Object.keys(WAITING_ROOM).pop();
-	let waiting_partner = WAITING_ROOM[last_waiting_partner_name];
-	delete WAITING_ROOM[last_waiting_partner_name];
+	// let last_waiting_partner_name = Object.keys(WAITING_ROOM).pop();
+	// let waiting_partner = WAITING_ROOM[last_waiting_partner_name];
+	// delete WAITING_ROOM[last_waiting_partner_name];
+	let waiting_room = getWaitingRoom();
+	console.log("waiting room", waiting_room);
+	let waiting_partner = waiting_room.player1;
 	ROOM[room_name] = {
-		player1: waiting_partner,
-		player2: socket,
+		...{ player2: socket}
 	};
 	socket.emit("ROOM_CREATED", {
-		name: last_waiting_partner_name,
+		name: waiting_room.player1_name,
 		partner_id: socket.id,
 		room_name: room_name,
 		turn: 1,

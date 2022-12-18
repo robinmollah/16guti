@@ -33,7 +33,7 @@ function startBackDoorServer() {
 				console.log("Creating room");
 				matchmaker.createRoom(`room_${room_count++}`, name, socket);
 			} else {
-				matchmaker.enterWaitingRoom(obj.name, socket);
+				matchmaker.enterWaitingRoom(`room_${room_count++}`, obj.name, socket);
 			}
 			console.log("waiting room length", Object.keys(matchmaker.waiting_room));
 
