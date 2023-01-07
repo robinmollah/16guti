@@ -38,9 +38,14 @@ module.exports.createRoom = (room_name, name, socket) => {
 	// delete WAITING_ROOM[last_waiting_partner_name];
 	let waiting_room = getWaitingRoom();
 	let waiting_partner = waiting_room.player1;
+	console.log("Room room_name 1", ROOM[room_name]);
 	ROOM[room_name] = {
-		...{ player2: socket}
+		...ROOM[room_name],
+		player2: socket,
+		player2_name: name
 	};
+	console.log("Room room_name 2", ROOM[room_name]);
+
 	socket.emit("ROOM_CREATED", {
 		name: waiting_room.player1_name,
 		partner_id: socket.id,
@@ -71,6 +76,7 @@ module.exports.notifyPartner = function (object, socket_id) {
 };
 
 function getPartnersSocket(room, own_socket_id) {
+	console.log("ROOM[room]", ROOM[room]);
 	let player1socket = ROOM[room].player1;
 	let player2socket = ROOM[room].player2;
 	console.log("socket ids", player2socket.id, player1socket.id, own_socket_id);
