@@ -30,8 +30,8 @@ export function initiateGame(type, partner_id, room_name, turn) {
 	const game = new Phaser.Game(config);
 
 	function preload() {
-		this.load.audio("move_guti", "audio/click_003.mp3");
-		this.load.audio("kill_guti", "audio/glass_hit_shatter_light_negative.mp3");
+		this.load.audio("move_guti", "/assets/audio/click_003.mp3");
+		this.load.audio("kill_guti", "/assets/audio/glass_hit_shatter_light_negative.mp3");
 	}
 
 	function create() {
