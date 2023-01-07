@@ -43,7 +43,7 @@ module.exports = {
 			patterns: [
 				{
 					from: "./assets",
-					to: "./",
+					to: "./assets",
 				},
 			],
 		}),

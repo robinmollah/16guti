@@ -37,7 +37,6 @@ module.exports.createRoom = (room_name, name, socket) => {
 	// let waiting_partner = WAITING_ROOM[last_waiting_partner_name];
 	// delete WAITING_ROOM[last_waiting_partner_name];
 	let waiting_room = getWaitingRoom();
-	console.log("waiting room", waiting_room);
 	let waiting_partner = waiting_room.player1;
 	ROOM[room_name] = {
 		...{ player2: socket}
