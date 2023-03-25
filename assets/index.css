@@ -21,6 +21,19 @@ input:hover, button:hover {
     display: none;
 }
 
+.warning-invalid-screen {
+    color: red;
+    font-weight: bold;
+    font-size: 1.5em;
+    animation: color_change 1s infinite;
+}
+
+@keyframes color_change {
+    0% {color: red;}
+    50% {color: white;}
+    100% {color: red;}
+}
+
 h2, h3 {
     color: white;
 }

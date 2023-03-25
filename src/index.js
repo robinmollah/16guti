@@ -2,7 +2,12 @@ import { initiateGame } from "./game";
 import { getSocket } from "./socket";
 // import logoImg from "./assets/logo.png";
 const LINE_FACTOR = 0.94;
-export let LINE_LENGTH = window.innerWidth / window.innerHeight < 1.12 ? window.innerWidth * LINE_FACTOR : window.innerHeight * LINE_FACTOR;
+const aspect_ratio = window.innerWidth / window.innerHeight;
+console.log("aspect ratio", aspect_ratio);
+if(aspect_ratio < 0.71){
+	document.getElementsByClassName("warning-invalid-screen")[0].style.display = "none";
+}
+export let LINE_LENGTH = aspect_ratio < 1.12 ? window.innerWidth * LINE_FACTOR : window.innerHeight * LINE_FACTOR;
 document.body.style.display="block";
 
 const submit = document.getElementById("submit");
