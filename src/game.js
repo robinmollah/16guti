@@ -3,6 +3,7 @@ import { OFFSET_X, OFFSET_Y } from "./BoardRenderer";
 import { getLines } from "./util";
 import GutiManager from "./GutiManager";
 import { getSocket } from "./socket";
+import { SOUND_EFFECTS } from "./consts/SOUND_EFFECTS";
 
 /**
  *
@@ -30,8 +31,8 @@ export function initiateGame(type, partner_id, room_name, turn) {
 	const game = new Phaser.Game(config);
 
 	function preload() {
-		this.load.audio("move_guti", "/assets/audio/click_003.mp3");
-		this.load.audio("kill_guti", "/assets/audio/glass_hit_shatter_light_negative.mp3");
+		this.load.audio(SOUND_EFFECTS.MOVE_GUTI, "/assets/audio/click_003.mp3");
+		this.load.audio(SOUND_EFFECTS.KILL_GUTI, "/assets/audio/glass_hit_shatter_light_negative.mp3");
 	}
 
 	function create() {
@@ -65,8 +66,8 @@ export function initiateGame(type, partner_id, room_name, turn) {
 				GutiManager.update();
 			});
 		}
-		GutiManager.addSoundEffect("move_guti", this.sound.add("move_guti"));
-		GutiManager.addSoundEffect("kill_guti", this.sound.add("kill_guti"));
+		GutiManager.addSoundEffect(SOUND_EFFECTS.MOVE_GUTI, this.sound.add(SOUND_EFFECTS.MOVE_GUTI));
+		GutiManager.addSoundEffect(SOUND_EFFECTS.KILL_GUTI, this.sound.add(SOUND_EFFECTS.KILL_GUTI));
 	}
 
 	function update() {

@@ -4,6 +4,7 @@ import { LINE_LENGTH } from "./index";
 import { possibleMoves } from "./PossibleMove";
 import Phaser from "phaser";
 import { GAME_TYPE } from "./consts/GAME_TYPE";
+import { SOUND_EFFECTS } from "./consts/SOUND_EFFECTS";
 
 export const GUTI_COLOR = {
 	PLAYER1: 0x3d5afe,
@@ -57,7 +58,7 @@ class GutiManager {
 	moveGuti(source, dest) {
 		GutiManager.orientation[dest] = GutiManager.orientation[source];
 		GutiManager.orientation[source] = GUTI_COLOR.BLANK;
-		this.play("move_guti");
+		this.play(SOUND_EFFECTS.MOVE_GUTI);
 		this.clearSuggestions();
 	}
 
@@ -247,7 +248,7 @@ class GutiManager {
 
 	updateScore(green, pink) {
 		console.log(green, pink);
-		this.play("kill_guti");
+		this.play(SOUND_EFFECTS.KILL_GUTI);
 	}
 
 	setPartnerId(partner_id) {
