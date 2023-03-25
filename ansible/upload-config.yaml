@@ -1,0 +1,7 @@
+- name: Upload file to remote host
+  hosts: all
+  tasks:
+    - name: Upload the nginx config file
+      copy:
+        src: ./nginx.conf
+        dest: /home/robinmollah/nginx/10guti.conf

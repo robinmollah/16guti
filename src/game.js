@@ -4,6 +4,7 @@ import { getLines } from "./util";
 import GutiManager from "./GutiManager";
 import { getSocket } from "./socket";
 import { SOUND_EFFECTS } from "./consts/SOUND_EFFECTS";
+import { GAME_TYPE } from "./consts/GAME_TYPE";
 
 /**
  *
@@ -51,7 +52,7 @@ export function initiateGame(type, partner_id, room_name, turn) {
 			boardLines.strokeLineShape(line);
 		}
 
-		if (type !== "pass_n_play") {
+		if (type !== GAME_TYPE.PASS_N_PLAY) {
 			GutiManager.setPartnerId(partner_id);
 			GutiManager.setRoomName(room_name);
 			GutiManager.setMyColor(turn);
