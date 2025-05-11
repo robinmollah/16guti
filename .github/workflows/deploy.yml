@@ -1,3 +1,10 @@
+name: Deploy to GCS
+
+on:
+  push:
+
+  workflows_dispatch:
+
 jobs:
   job_id:
     # Any runner supporting Node 20 or newer
