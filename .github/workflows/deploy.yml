@@ -3,7 +3,7 @@ name: Deploy to GCS
 on:
   push:
 
-  workflows_dispatch:
+  workflow_dispatch:
 
 jobs:
   job_id:
