@@ -22,6 +22,7 @@ jobs:
         with:
           project_id: 'moontuni-robin'
           workload_identity_provider: 'projects/717460429507/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-actions@moontuni-robin.iam.gserviceaccount.com'
 
 
       - name: Install dependencies with yarn
