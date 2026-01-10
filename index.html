@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>10 Guti Game</title>
-    <link type="text/css" rel="stylesheet" href="assets/index.css">
-    <script src="assets/jquery.min.js"></script>
-    <script src="assets/toast-alert.js"></script>
-  </head>
-  <body style="display:none;">
+
+<head>
+  <meta charset="utf-8">
+  <title>10 Guti Game</title>
+  <link type="text/css" rel="stylesheet" href="assets/index.css">
+  <script src="assets/jquery.min.js"></script>
+  <script src="assets/toast-alert.js"></script>
+</head>
+
+<body style="display:none;">
   <div id="prompt-1">
-    <div class="warning-invalid-screen">Play only in Mobile devices</div><br/>
-    <input type="text" id="username" placeholder="Your name"/>
+    <div class="warning-invalid-screen">Play only in Mobile devices</div><br />
+    <input type="text" id="username" placeholder="Your name" />
     <button id="submit">Submit</button>
     <button style="display: none" id="rename-button">Rename Username</button>
-    <br/>
-    <br/>
-    <br/>
+    <br />
+    <br />
+    <br />
     <button id="pass_n_play">Pass N Play</button>
   </div>
   <div id="waiting">
-    <h2>Waiting for your partner!</h2><br/>
-    <img src="assets/loading-gif.gif" alt="Waiting for partner"/>
+    <h2>Waiting for your partner!</h2><br />
+    <img src="assets/loading-gif.gif" alt="Waiting for partner" />
   </div>
   <div id="game_play">
     <h3>You are playing with <span id="partner-name"></span></h3>
@@ -28,5 +30,6 @@
     <div class="turn_indicator_bg" id="turn_indicator_bg"></div>
   </div>
   <script src="assets/name.js"></script>
-  </body>
+</body>
+
 </html>
