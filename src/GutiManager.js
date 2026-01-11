@@ -75,6 +75,15 @@ class GutiManager {
 
 	draw(board) {
 		if (GutiManager.update) return;
+
+		// Clear existing objects before redrawing
+		for (let key in GutiManager.objects) {
+			if (GutiManager.objects[key] && GutiManager.objects[key].destroy) {
+				GutiManager.objects[key].destroy();
+			}
+		}
+		GutiManager.objects = {};
+
 		this.updateTurn(board);
 
 		GutiManager.update = true;
@@ -91,12 +100,18 @@ class GutiManager {
 			let currentRadius = i === GutiManager.picked ? radius * 1.3 : radius;
 			gutiImage.setDisplaySize(currentRadius * 2, currentRadius * 2);
 
-			// Add selection ring if picked
+			// Add selection glow if picked
 			if (i === GutiManager.picked) {
-				const selectionRing = board.add.graphics();
-				selectionRing.lineStyle(2, 0xffffff, 0.8);
-				selectionRing.strokeCircle(guti.x, guti.y, currentRadius + 5);
-				GutiManager.objects["selectionRing"] = selectionRing;
+				const selectionGlow = board.add.graphics();
+				const glowColor = guti.color;
+
+				// Draw multiple rings for glow effect
+				for (let j = 0; j < 4; j++) {
+					selectionGlow.lineStyle(2, glowColor, 0.8 - (j * 0.2));
+					selectionGlow.strokeCircle(guti.x, guti.y, currentRadius + 4 + (j * 2));
+				}
+
+				GutiManager.objects["selectionGlow"] = selectionGlow;
 			}
 
 			// Apply mask to fix transparency (square look)
