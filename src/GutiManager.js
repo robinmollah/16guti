@@ -25,6 +25,11 @@ const GUTI_RADIUS = LINE_LENGTH * 0.027;
  * @property {name: String, value: Phaser.Sound.BaseSound} sound_effects
  */
 class GutiManager {
+	static picked = null;
+	static update = false;
+	static orientation = [];
+	static objects = {};
+
 	constructor() {
 		this.start();
 		this.score = {
@@ -99,10 +104,10 @@ class GutiManager {
 				if (
 					this.game_type === GAME_TYPE.PASS_N_PLAY ||
 					(this.game_type === GAME_TYPE.ONLINE && this.my_color === TURN)) {
-					this.addPickUpEvent(circle, guti);
+					this.addPickUpEvent(board, circle, guti);
 				}
 			} else if (guti.color === GUTI_COLOR.VALID) {
-				this.addPickUpEvent(circle, guti, "VALID");
+				this.addPickUpEvent(board, circle, guti, "VALID");
 			}
 			GutiManager.objects[i] = circle;
 			i++;
@@ -111,33 +116,60 @@ class GutiManager {
 
 	/**
    *
+   * @param board
    * @param circle
    * @param guti
    * @param {"player1" | "VALID" | null}guti_type
    */
-	addPickUpEvent(circle, guti, guti_type = null) {
+	addPickUpEvent(board, circle, guti, guti_type = null) {
 		if (guti_type === "VALID") {
 			circle.setInteractive().once("pointerdown", () => {
 				window.startTurnCountdown();
 				window.flipTurnText();
-				GutiManager.objects[GutiManager.picked].destroy();
-				this.moveGuti(GutiManager.picked, guti.i);
-				if (this.game_type === GAME_TYPE.ONLINE)
-					getSocket().emit("nextTurn", {
-						value: TURN,
-						src: GutiManager.picked,
-						dest: guti.i,
-						room: this.room_name,
-					});
-				this.killHandler(GutiManager.picked, guti.i);
-				GutiManager.picked = null;
-				this.flipTurn();
-				GutiManager.update = false;
+				const pickedIndex = GutiManager.picked;
+				if (pickedIndex === null || pickedIndex === undefined) {
+					console.error("No guti selected to move.");
+					return;
+				}
+				const pickedCircle = GutiManager.objects[pickedIndex];
+				if (!pickedCircle || !pickedCircle.disableInteractive) {
+					console.error("Selected guti object not found or invalid at index", pickedIndex);
+					return;
+				}
+				// Disable interaction on the picked circle to prevent double-clicks during animation
+				pickedCircle.disableInteractive();
+
+				// Animate the picked guti to the destination
+				board.tweens.add({
+					targets: pickedCircle,
+					x: guti.x,
+					y: guti.y,
+					duration: 300,
+					ease: "Power2",
+					onComplete: () => {
+						pickedCircle.destroy();
+						this.moveGuti(pickedIndex, guti.i);
+						if (this.game_type === GAME_TYPE.ONLINE)
+							getSocket().emit("nextTurn", {
+								value: TURN,
+								src: pickedIndex,
+								dest: guti.i,
+								room: this.room_name,
+							});
+						this.killHandler(pickedIndex, guti.i);
+						GutiManager.picked = null;
+						this.flipTurn();
+						GutiManager.update = false;
+					},
+				});
 			});
 		} else {
 			circle.setInteractive().once("pointerdown", () => {
-				if (GutiManager.picked)
-					GutiManager.objects[GutiManager.picked].destroy();
+				if (GutiManager.picked !== null && GutiManager.picked !== undefined) {
+					if (GutiManager.objects[GutiManager.picked]) {
+						GutiManager.objects[GutiManager.picked].destroy();
+					}
+				}
 				if (guti.color === TURN) {
 					this.showValidMoves(guti.i, this.getGutiOrientation());
 					GutiManager.picked = guti.i;
