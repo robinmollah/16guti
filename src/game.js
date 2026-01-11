@@ -6,6 +6,7 @@ import { getSocket } from "./socket";
 import { SOUND_EFFECTS } from "./consts/SOUND_EFFECTS";
 import { GAME_TYPE } from "./consts/GAME_TYPE";
 import { LINE_LENGTH } from "./consts/Layout";
+import { BottomHUD } from "./components/BottomHUD";
 
 /**
  *
@@ -106,6 +107,10 @@ export function initiateGame(type, partner_id, room_name, turn) {
 		}
 		GutiManager.addSoundEffect(SOUND_EFFECTS.MOVE_GUTI, this.sound.add(SOUND_EFFECTS.MOVE_GUTI));
 		GutiManager.addSoundEffect(SOUND_EFFECTS.KILL_GUTI, this.sound.add(SOUND_EFFECTS.KILL_GUTI));
+
+		// Bottom HUD
+		const bottomHUD = new BottomHUD(this);
+		bottomHUD.draw();
 	}
 
 	function update() {

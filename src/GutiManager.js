@@ -369,21 +369,6 @@ class GutiManager {
 			this.barBg.lineStyle(2, TURN, 0.5);
 			this.barBg.strokeRoundedRect(window.innerWidth * 0.1, y_pos - 25, window.innerWidth * 0.8, 50, 25);
 		}
-
-		// Bottom Bar (Fixed position at bottom)
-		if (!this.bottomBar) {
-			const bottomY = window.innerHeight - 60;
-			this.bottomBar = board.add.graphics();
-			this.bottomBar.fillStyle(0x1a1a1a, 0.9);
-			this.bottomBar.fillRoundedRect(window.innerWidth * 0.05, bottomY - 30, window.innerWidth * 0.9, 60, 30);
-			this.bottomBar.lineStyle(1, 0x333333, 1);
-			this.bottomBar.strokeRoundedRect(window.innerWidth * 0.05, bottomY - 30, window.innerWidth * 0.9, 60, 30);
-
-			const btnStyle = { fontFamily: "Outfit, Arial", fontSize: "16px", color: "#aaaaaa" };
-			board.add.text(window.innerWidth * 0.2, bottomY, "↺ Undo", btnStyle).setOrigin(0.5);
-			board.add.text(window.innerWidth * 0.5, bottomY, "💬 Emote", btnStyle).setOrigin(0.5);
-			board.add.text(window.innerWidth * 0.8, bottomY, "☰ Menu", btnStyle).setOrigin(0.5);
-		}
 	}
 
 	/**
