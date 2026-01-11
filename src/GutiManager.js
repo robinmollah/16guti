@@ -73,9 +73,7 @@ class GutiManager {
 		GutiManager.update = false;
 	}
 
-	draw(board) {
-		if (GutiManager.update || GutiManager.isAnimating) return;
-
+	clearObjects() {
 		// Clear existing objects before redrawing
 		for (let key in GutiManager.objects) {
 			if (GutiManager.objects[key] && GutiManager.objects[key].destroy) {
@@ -83,75 +81,91 @@ class GutiManager {
 			}
 		}
 		GutiManager.objects = {};
+	}
 
+	createSelectionGlow(board, guti, currentRadius) {
+		const selectionGlow = board.add.graphics();
+		const glowColor = guti.color;
+
+		// Draw multiple rings for glow effect
+		for (let j = 0; j < 4; j++) {
+			selectionGlow.lineStyle(2, glowColor, 0.8 - (j * 0.2));
+			selectionGlow.strokeCircle(guti.x, guti.y, currentRadius + 4 + (j * 2));
+		}
+		GutiManager.objects["selectionGlow"] = selectionGlow;
+	}
+
+	applyMask(board, gutiImage, guti, currentRadius) {
+		// Apply mask to fix transparency (square look)
+		const mask = board.make.graphics();
+		mask.fillStyle(0xffffff);
+		mask.beginPath();
+		mask.arc(guti.x, guti.y, currentRadius, 0, Math.PI * 2);
+		mask.fillPath();
+		const geometryMask = mask.createGeometryMask();
+		gutiImage.setMask(geometryMask);
+		gutiImage.maskObj = mask; // Store mask for animation
+	}
+
+	renderGuti(board, guti, i, radius) {
+		let gutiImage = board.add.image(
+			guti.x,
+			guti.y,
+			"guti"
+		);
+
+		// Set display size based on radius
+		let currentRadius = i === GutiManager.picked ? radius * 1.3 : radius;
+		gutiImage.setDisplaySize(currentRadius * 2, currentRadius * 2);
+
+		// Add selection glow if picked
+		if (i === GutiManager.picked) {
+			this.createSelectionGlow(board, guti, currentRadius);
+		}
+
+		this.applyMask(board, gutiImage, guti, currentRadius);
+
+		// Apply tint
+		if (guti.color === GUTI_COLOR.VALID) {
+			gutiImage.setTint(TURN);
+			gutiImage.alpha = 0.3;
+			board.tweens.add({
+				targets: gutiImage,
+				alpha: 1,
+				duration: 200,
+				ease: Phaser.Math.Easing.Bounce.InOut,
+				repeat: -1,
+				yoyo: true,
+			});
+		} else {
+			gutiImage.setTint(guti.color);
+		}
+
+		guti.i = i;
+		// FIXME a lot of interactive is being set, find a way to solve this memory leak
+		if (guti.color === TURN) {
+			if (
+				this.game_type === GAME_TYPE.PASS_N_PLAY ||
+				(this.game_type === GAME_TYPE.ONLINE && this.my_color === TURN)) {
+				this.addPickUpEvent(board, gutiImage, guti);
+			}
+		} else if (guti.color === GUTI_COLOR.VALID) {
+			this.addPickUpEvent(board, gutiImage, guti, "VALID");
+		}
+		GutiManager.objects[i] = gutiImage;
+	}
+
+	draw(board) {
+		if (GutiManager.update || GutiManager.isAnimating) return;
+
+		this.clearObjects();
 		this.updateTurn(board);
 
 		GutiManager.update = true;
 		let radius = GUTI_RADIUS;
 		let i = 0;
 		for (let guti of this.getGutiPositions(LINE_LENGTH / 4)) {
-			let gutiImage = board.add.image(
-				guti.x,
-				guti.y,
-				"guti"
-			);
-
-			// Set display size based on radius
-			let currentRadius = i === GutiManager.picked ? radius * 1.3 : radius;
-			gutiImage.setDisplaySize(currentRadius * 2, currentRadius * 2);
-
-			// Add selection glow if picked
-			if (i === GutiManager.picked) {
-				const selectionGlow = board.add.graphics();
-				const glowColor = guti.color;
-
-				// Draw multiple rings for glow effect
-				for (let j = 0; j < 4; j++) {
-					selectionGlow.lineStyle(2, glowColor, 0.8 - (j * 0.2));
-					selectionGlow.strokeCircle(guti.x, guti.y, currentRadius + 4 + (j * 2));
-				}
-
-				GutiManager.objects["selectionGlow"] = selectionGlow;
-			}
-
-			// Apply mask to fix transparency (square look)
-			const mask = board.make.graphics();
-			mask.fillStyle(0xffffff);
-			mask.beginPath();
-			mask.arc(guti.x, guti.y, currentRadius, 0, Math.PI * 2);
-			mask.fillPath();
-			const geometryMask = mask.createGeometryMask();
-			gutiImage.setMask(geometryMask);
-			gutiImage.maskObj = mask; // Store mask for animation
-
-			// Apply tint
-			if (guti.color === GUTI_COLOR.VALID) {
-				gutiImage.setTint(TURN);
-				gutiImage.alpha = 0.3;
-				board.tweens.add({
-					targets: gutiImage,
-					alpha: 1,
-					duration: 200,
-					ease: Phaser.Math.Easing.Bounce.InOut,
-					repeat: -1,
-					yoyo: true,
-				});
-			} else {
-				gutiImage.setTint(guti.color);
-			}
-
-			guti.i = i;
-			// FIXME a lot of interactive is being set, find a way to solve this memory leak
-			if (guti.color === TURN) {
-				if (
-					this.game_type === GAME_TYPE.PASS_N_PLAY ||
-					(this.game_type === GAME_TYPE.ONLINE && this.my_color === TURN)) {
-					this.addPickUpEvent(board, gutiImage, guti);
-				}
-			} else if (guti.color === GUTI_COLOR.VALID) {
-				this.addPickUpEvent(board, gutiImage, guti, "VALID");
-			}
-			GutiManager.objects[i] = gutiImage;
+			this.renderGuti(board, guti, i, radius);
 			i++;
 		}
 	}
