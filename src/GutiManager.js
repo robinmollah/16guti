@@ -289,8 +289,11 @@ class GutiManager {
 			turnText = TURN === GUTI_COLOR.PLAYER1 ? "Blue's Turn" : "Pink's Turn";
 		}
 		console.log("Turn", TURN, this.my_color, turnText);
+
+		const textY = TURN === GUTI_COLOR.PLAYER1 ? OFFSET_Y * 0.3 : window.innerHeight - (OFFSET_Y * 0.3);
+
 		if (!this.turnTextView) {
-			this.turnTextView = board.add.text(OFFSET_X + (LINE_LENGTH * 0.5), OFFSET_Y * 0.3, turnText, {
+			this.turnTextView = board.add.text(OFFSET_X + (LINE_LENGTH * 0.5), textY, turnText, {
 				backgroundColor: `#${TURN.toString(16)}`,
 			});
 			this.turnTextView.setFontSize(40);
@@ -298,6 +301,7 @@ class GutiManager {
 		} else {
 			this.turnTextView.setText(turnText);
 			this.turnTextView.setBackgroundColor(`#${TURN.toString(16)}`);
+			this.turnTextView.setY(textY);
 		}
 	}
 
