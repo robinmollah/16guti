@@ -340,7 +340,7 @@ class GutiManager {
 
 	updateTurn(board) {
 		let text = TURN === GUTI_COLOR.PLAYER1 ? "BLUE'S TURN" : "PINK'S TURN";
-		let y_pos = TURN === GUTI_COLOR.PLAYER1 ? OFFSET_Y * 0.3 : window.innerHeight - (OFFSET_Y * 0.3);
+		let y_pos = OFFSET_Y * 0.3; // Static top position
 
 		if (!this.turnTextView) {
 			// Top/Bottom Bar Background
