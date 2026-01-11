@@ -187,7 +187,6 @@ class GutiManager {
 					duration: 300,
 					ease: "Power2",
 					onComplete: () => {
-						pickedCircle.destroy();
 						this.moveGuti(pickedIndex, guti.i);
 						if (this.game_type === GAME_TYPE.ONLINE)
 							getSocket().emit("nextTurn", {
@@ -205,11 +204,6 @@ class GutiManager {
 			});
 		} else {
 			circle.setInteractive().once("pointerdown", () => {
-				if (GutiManager.picked !== null && GutiManager.picked !== undefined) {
-					if (GutiManager.objects[GutiManager.picked]) {
-						GutiManager.objects[GutiManager.picked].destroy();
-					}
-				}
 				if (guti.color === TURN) {
 					this.showValidMoves(guti.i, this.getGutiOrientation());
 					GutiManager.picked = guti.i;
