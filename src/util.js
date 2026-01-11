@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { LINE_LENGTH } from "./index";
+import { LINE_LENGTH } from "./consts/Layout";
 
 export function getLines() {
 	let lines = [];

@@ -1,6 +1,6 @@
 import { OFFSET_X, OFFSET_Y } from "./BoardRenderer";
 import { getSocket } from "./socket";
-import { LINE_LENGTH } from "./index";
+import { LINE_LENGTH } from "./consts/Layout";
 import { possibleMoves } from "./PossibleMove";
 import Phaser from "phaser";
 import { GAME_TYPE } from "./consts/GAME_TYPE";
@@ -13,8 +13,10 @@ export const GUTI_COLOR = {
 	VALID: 0xcc7a00,
 };
 
+// export let TURN = GUTI_COLOR.PLAYER1;
+// const GUTI_RADIUS = window.innerWidth * 0.027;
 export let TURN = GUTI_COLOR.PLAYER1;
-const GUTI_RADIUS = window.innerWidth * 0.027;
+const GUTI_RADIUS = LINE_LENGTH * 0.027;
 
 /**
  * @typedef {Object} GutiManager
@@ -80,7 +82,7 @@ class GutiManager {
 				i === GutiManager.picked ? radius * 1.3 : radius,
 				guti.color === GUTI_COLOR.VALID ? TURN : guti.color,
 			);
-			if(guti.color === GUTI_COLOR.VALID) {
+			if (guti.color === GUTI_COLOR.VALID) {
 				circle.alpha = 0.3;
 				board.tweens.add({
 					targets: circle,
@@ -96,7 +98,7 @@ class GutiManager {
 			if (guti.color === TURN) {
 				if (
 					this.game_type === GAME_TYPE.PASS_N_PLAY ||
-          (this.game_type === GAME_TYPE.ONLINE && this.my_color === TURN)) {
+					(this.game_type === GAME_TYPE.ONLINE && this.my_color === TURN)) {
 					this.addPickUpEvent(circle, guti);
 				}
 			} else if (guti.color === GUTI_COLOR.VALID) {
@@ -113,14 +115,14 @@ class GutiManager {
    * @param guti
    * @param {"player1" | "VALID" | null}guti_type
    */
-	addPickUpEvent(circle, guti, guti_type= null) {
+	addPickUpEvent(circle, guti, guti_type = null) {
 		if (guti_type === "VALID") {
 			circle.setInteractive().once("pointerdown", () => {
 				window.startTurnCountdown();
 				window.flipTurnText();
 				GutiManager.objects[GutiManager.picked].destroy();
 				this.moveGuti(GutiManager.picked, guti.i);
-				if(this.game_type === GAME_TYPE.ONLINE)
+				if (this.game_type === GAME_TYPE.ONLINE)
 					getSocket().emit("nextTurn", {
 						value: TURN,
 						src: GutiManager.picked,
@@ -134,7 +136,7 @@ class GutiManager {
 			});
 		} else {
 			circle.setInteractive().once("pointerdown", () => {
-				if(GutiManager.picked)
+				if (GutiManager.picked)
 					GutiManager.objects[GutiManager.picked].destroy();
 				if (guti.color === TURN) {
 					this.showValidMoves(guti.i, this.getGutiOrientation());
@@ -155,7 +157,7 @@ class GutiManager {
 		let row = 0;
 		let column = 0;
 		let orientation;
-		if(!this.first_move_done) {
+		if (!this.first_move_done) {
 			orientation = this.my_color === GUTI_COLOR.PLAYER1 ? this.getGutiOrientation() : this.getGutiOrientation().reverse();
 			this.first_move_done = true;
 		} else {
@@ -179,10 +181,10 @@ class GutiManager {
 
 	flipTurn() {
 		TURN =
-      TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
+			TURN === GUTI_COLOR.PLAYER1 ? GUTI_COLOR.PLAYER2 : GUTI_COLOR.PLAYER1;
 	}
 
-	isMyTurn(){
+	isMyTurn() {
 		return this.my_color === TURN;
 	}
 
@@ -222,7 +224,7 @@ class GutiManager {
 
 	// TODO
 	// eslint-disable-next-line no-unused-vars
-	importGameState(filename) {}
+	importGameState(filename) { }
 
 	killHandler(src, dst) {
 		const diff = Math.abs(src - dst);
@@ -230,7 +232,7 @@ class GutiManager {
 
 		if (
 			diff === 10 || // row side kill
-      diff === 2 // column side kill
+			diff === 2 // column side kill
 		) {
 			if (diff === 10) {
 				GutiManager.orientation[min + 5] = GUTI_COLOR.BLANK;
@@ -281,17 +283,17 @@ class GutiManager {
 
 	updateTurn(board) {
 		let turnText;
-		if(this.my_color){
+		if (this.my_color) {
 			turnText = TURN === this.my_color ? "Your Turn" : "Opponent's Turn";
 		} else {
 			turnText = TURN === GUTI_COLOR.PLAYER1 ? "Blue's Turn" : "Pink's Turn";
 		}
 		console.log("Turn", TURN, this.my_color, turnText);
 		if (!this.turnTextView) {
-			this.turnTextView = board.add.text(LINE_LENGTH * 0.5, window.innerHeight * 0.1, turnText, {
+			this.turnTextView = board.add.text(OFFSET_X + (LINE_LENGTH * 0.5), OFFSET_Y * 0.3, turnText, {
 				backgroundColor: `#${TURN.toString(16)}`,
 			});
-			this.turnTextView.setFontSize(60);
+			this.turnTextView.setFontSize(40);
 			this.turnTextView.setOrigin(0.5);
 		} else {
 			this.turnTextView.setText(turnText);
@@ -303,11 +305,11 @@ class GutiManager {
 	 * @param {string} name
 	 * @param {Phaser.Sound.BaseSound} audio
 	 */
-	addSoundEffect(name, audio){
+	addSoundEffect(name, audio) {
 		this.sound_effects[name] = audio;
 	}
 
-	play(name){
+	play(name) {
 		try {
 			this.sound_effects[name].play();
 		} catch (e) {

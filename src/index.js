@@ -1,14 +1,14 @@
+import { LINE_LENGTH } from "./consts/Layout";
 import { initiateGame } from "./game";
 import { getSocket } from "./socket";
 // import logoImg from "./assets/logo.png";
-const LINE_FACTOR = 0.94;
+
 const aspect_ratio = window.innerWidth / window.innerHeight;
 console.log("aspect ratio", aspect_ratio);
-if(aspect_ratio < 0.71){
+if (aspect_ratio < 0.71) {
 	document.getElementsByClassName("warning-invalid-screen")[0].style.display = "none";
 }
-export let LINE_LENGTH = aspect_ratio < 1.12 ? window.innerWidth * LINE_FACTOR : window.innerHeight * LINE_FACTOR;
-document.body.style.display="block";
+document.body.style.display = "block";
 
 const submit = document.getElementById("submit");
 const name = document.getElementById("username");
@@ -40,7 +40,7 @@ if (name && name.length > 0) {
 		getSocket().on("ENTERED_WAITING_ROOM", (obj) => {
 			console.log("ENTERED_WAITING_ROOM", obj);
 			window.history.pushState(
-				{pageTitle: "Room " + obj.room_name},
+				{ pageTitle: "Room " + obj.room_name },
 				"",
 				"/room/" + obj.room_name);
 		});
@@ -50,7 +50,7 @@ if (name && name.length > 0) {
 			game_play.style.display = "block";
 			partner_name.innerText = obj.name;
 			window.history.pushState(
-				{pageTitle: "Room " + obj.room_name},
+				{ pageTitle: "Room " + obj.room_name },
 				"",
 				"/room/" + obj.room_name);
 			initiateGame("online", obj.partner_id, obj.room_name, obj.turn);
@@ -61,12 +61,12 @@ if (name && name.length > 0) {
 // dev.js
 
 // eslint-disable-next-line no-undef
-if(PROCESS_ENV.NODE_ENV.toLowerCase() === "development"){
+if (PROCESS_ENV.NODE_ENV.toLowerCase() === "development") {
 	// eslint-disable-next-line no-undef
-	$(document).ready(function() { _fillAndGo(); });
+	$(document).ready(function () { _fillAndGo(); });
 }
 
-function _fillAndGo(){
+function _fillAndGo() {
 	name.value = "robin" + Math.ceil(Math.random() * 100);
 	submit.click();
 }
