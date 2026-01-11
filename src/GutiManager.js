@@ -7,8 +7,8 @@ import { GAME_TYPE } from "./consts/GAME_TYPE";
 import { SOUND_EFFECTS } from "./consts/SOUND_EFFECTS";
 
 export const GUTI_COLOR = {
-	PLAYER1: 0x3d5afe,
-	PLAYER2: 0xf73378,
+	PLAYER1: 0x1E88E5,
+	PLAYER2: 0xD81B60,
 	BLANK: 0xdddddd,
 	VALID: 0xcc7a00,
 };
@@ -81,35 +81,44 @@ class GutiManager {
 		let radius = GUTI_RADIUS;
 		let i = 0;
 		for (let guti of this.getGutiPositions(LINE_LENGTH / 4)) {
-			let circle = board.add.circle(
+			let gutiImage = board.add.image(
 				guti.x,
 				guti.y,
-				i === GutiManager.picked ? radius * 1.3 : radius,
-				guti.color === GUTI_COLOR.VALID ? TURN : guti.color,
+				"guti"
 			);
+
+			// Set display size based on radius
+			let currentRadius = i === GutiManager.picked ? radius * 1.3 : radius;
+			gutiImage.setDisplaySize(currentRadius * 2, currentRadius * 2);
+
+			// Apply tint
 			if (guti.color === GUTI_COLOR.VALID) {
-				circle.alpha = 0.3;
+				gutiImage.setTint(TURN);
+				gutiImage.alpha = 0.3;
 				board.tweens.add({
-					targets: circle,
+					targets: gutiImage,
 					alpha: 1,
 					duration: 200,
 					ease: Phaser.Math.Easing.Bounce.InOut,
 					repeat: -1,
 					yoyo: true,
 				});
+			} else {
+				gutiImage.setTint(guti.color);
 			}
+
 			guti.i = i;
 			// FIXME a lot of interactive is being set, find a way to solve this memory leak
 			if (guti.color === TURN) {
 				if (
 					this.game_type === GAME_TYPE.PASS_N_PLAY ||
 					(this.game_type === GAME_TYPE.ONLINE && this.my_color === TURN)) {
-					this.addPickUpEvent(board, circle, guti);
+					this.addPickUpEvent(board, gutiImage, guti);
 				}
 			} else if (guti.color === GUTI_COLOR.VALID) {
-				this.addPickUpEvent(board, circle, guti, "VALID");
+				this.addPickUpEvent(board, gutiImage, guti, "VALID");
 			}
-			GutiManager.objects[i] = circle;
+			GutiManager.objects[i] = gutiImage;
 			i++;
 		}
 	}

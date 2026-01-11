@@ -34,6 +34,7 @@ export function initiateGame(type, partner_id, room_name, turn) {
 	function preload() {
 		this.load.audio(SOUND_EFFECTS.MOVE_GUTI, "/assets/audio/click_003.mp3");
 		this.load.audio(SOUND_EFFECTS.KILL_GUTI, "/assets/audio/glass_hit_shatter_light_negative.mp3");
+		this.load.image("guti", "/assets/guti/guti.png");
 	}
 
 	function create() {
