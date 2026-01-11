@@ -74,7 +74,7 @@ class GutiManager {
 	}
 
 	draw(board) {
-		if (GutiManager.update) return;
+		if (GutiManager.update || GutiManager.isAnimating) return;
 
 		// Clear existing objects before redrawing
 		for (let key in GutiManager.objects) {
@@ -120,7 +120,9 @@ class GutiManager {
 			mask.beginPath();
 			mask.arc(guti.x, guti.y, currentRadius, 0, Math.PI * 2);
 			mask.fillPath();
-			gutiImage.setMask(mask.createGeometryMask());
+			const geometryMask = mask.createGeometryMask();
+			gutiImage.setMask(geometryMask);
+			gutiImage.maskObj = mask; // Store mask for animation
 
 			// Apply tint
 			if (guti.color === GUTI_COLOR.VALID) {
@@ -164,20 +166,29 @@ class GutiManager {
 	addPickUpEvent(board, circle, guti, guti_type = null) {
 		if (guti_type === "VALID") {
 			circle.setInteractive().once("pointerdown", () => {
-				window.startTurnCountdown();
-				window.flipTurnText();
+				GutiManager.isAnimating = true; // Lock immediately to prevent redraws
+				// window.startTurnCountdown(); // Removed legacy HUD call
+				// window.flipTurnText(); // Removed legacy HUD call
 				const pickedIndex = GutiManager.picked;
 				if (pickedIndex === null || pickedIndex === undefined) {
 					console.error("No guti selected to move.");
+					GutiManager.isAnimating = false; // Release lock if invalid
 					return;
 				}
 				const pickedCircle = GutiManager.objects[pickedIndex];
 				if (!pickedCircle || !pickedCircle.disableInteractive) {
 					console.error("Selected guti object not found or invalid at index", pickedIndex);
+					GutiManager.isAnimating = false; // Release lock if invalid
 					return;
 				}
-				// Disable interaction on the picked circle to prevent double-clicks during animation
+				// Disable interaction
 				pickedCircle.disableInteractive();
+
+				// Remove glow immediately so it doesn't stay behind
+				if (GutiManager.objects["selectionGlow"]) {
+					GutiManager.objects["selectionGlow"].destroy();
+					delete GutiManager.objects["selectionGlow"];
+				}
 
 				// Animate the picked guti to the destination
 				board.tweens.add({
@@ -187,6 +198,7 @@ class GutiManager {
 					duration: 300,
 					ease: "Power2",
 					onComplete: () => {
+						// pickedCircle.destroy(); // Handled by next draw()
 						this.moveGuti(pickedIndex, guti.i);
 						if (this.game_type === GAME_TYPE.ONLINE)
 							getSocket().emit("nextTurn", {
@@ -198,9 +210,21 @@ class GutiManager {
 						this.killHandler(pickedIndex, guti.i);
 						GutiManager.picked = null;
 						this.flipTurn();
+						GutiManager.isAnimating = false;
 						GutiManager.update = false;
 					},
 				});
+
+				// Animate the mask along with the guti
+				if (pickedCircle.maskObj) {
+					board.tweens.add({
+						targets: pickedCircle.maskObj,
+						x: guti.x - pickedCircle.x,
+						y: guti.y - pickedCircle.y,
+						duration: 300,
+						ease: "Power2",
+					});
+				}
 			});
 		} else {
 			circle.setInteractive().once("pointerdown", () => {
