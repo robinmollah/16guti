@@ -7,8 +7,8 @@ import { GAME_TYPE } from "./consts/GAME_TYPE";
 import { SOUND_EFFECTS } from "./consts/SOUND_EFFECTS";
 
 export const GUTI_COLOR = {
-	PLAYER1: 0x1E88E5,
-	PLAYER2: 0xD81B60,
+	PLAYER1: 0x64B5F6, // Lighter Professional Blue
+	PLAYER2: 0xF06292, // Lighter Professional Pink
 	BLANK: 0xdddddd,
 	VALID: 0xcc7a00,
 };
@@ -90,6 +90,22 @@ class GutiManager {
 			// Set display size based on radius
 			let currentRadius = i === GutiManager.picked ? radius * 1.3 : radius;
 			gutiImage.setDisplaySize(currentRadius * 2, currentRadius * 2);
+
+			// Add selection ring if picked
+			if (i === GutiManager.picked) {
+				const selectionRing = board.add.graphics();
+				selectionRing.lineStyle(2, 0xffffff, 0.8);
+				selectionRing.strokeCircle(guti.x, guti.y, currentRadius + 5);
+				GutiManager.objects["selectionRing"] = selectionRing;
+			}
+
+			// Apply mask to fix transparency (square look)
+			const mask = board.make.graphics();
+			mask.fillStyle(0xffffff);
+			mask.beginPath();
+			mask.arc(guti.x, guti.y, currentRadius, 0, Math.PI * 2);
+			mask.fillPath();
+			gutiImage.setMask(mask.createGeometryMask());
 
 			// Apply tint
 			if (guti.color === GUTI_COLOR.VALID) {
@@ -323,26 +339,50 @@ class GutiManager {
 	}
 
 	updateTurn(board) {
-		let turnText;
-		if (this.my_color) {
-			turnText = TURN === this.my_color ? "Your Turn" : "Opponent's Turn";
-		} else {
-			turnText = TURN === GUTI_COLOR.PLAYER1 ? "Blue's Turn" : "Pink's Turn";
-		}
-		console.log("Turn", TURN, this.my_color, turnText);
-
-		const textY = TURN === GUTI_COLOR.PLAYER1 ? OFFSET_Y * 0.3 : window.innerHeight - (OFFSET_Y * 0.3);
+		let text = TURN === GUTI_COLOR.PLAYER1 ? "BLUE'S TURN" : "PINK'S TURN";
+		let y_pos = TURN === GUTI_COLOR.PLAYER1 ? OFFSET_Y * 0.3 : window.innerHeight - (OFFSET_Y * 0.3);
 
 		if (!this.turnTextView) {
-			this.turnTextView = board.add.text(OFFSET_X + (LINE_LENGTH * 0.5), textY, turnText, {
-				backgroundColor: `#${TURN.toString(16)}`,
+			// Top/Bottom Bar Background
+			this.barBg = board.add.graphics();
+			this.barBg.fillStyle(0x1a1a1a, 0.8);
+			this.barBg.fillRoundedRect(window.innerWidth * 0.1, y_pos - 25, window.innerWidth * 0.8, 50, 25);
+
+			this.turnTextView = board.add.text(window.innerWidth / 2, y_pos, text, {
+				fontFamily: "Outfit, Arial",
+				fontSize: "24px",
+				fontStyle: "bold",
+				color: "#ffffff",
+				align: "center",
 			});
-			this.turnTextView.setFontSize(40);
 			this.turnTextView.setOrigin(0.5);
 		} else {
-			this.turnTextView.setText(turnText);
-			this.turnTextView.setBackgroundColor(`#${TURN.toString(16)}`);
-			this.turnTextView.setY(textY);
+			this.turnTextView.setText(text);
+			this.turnTextView.y = y_pos;
+
+			// Update Bar Position
+			this.barBg.clear();
+			this.barBg.fillStyle(0x1a1a1a, 0.8);
+			this.barBg.fillRoundedRect(window.innerWidth * 0.1, y_pos - 25, window.innerWidth * 0.8, 50, 25);
+
+			// Optional: Add a glow or color highlight to the bar based on turn
+			this.barBg.lineStyle(2, TURN, 0.5);
+			this.barBg.strokeRoundedRect(window.innerWidth * 0.1, y_pos - 25, window.innerWidth * 0.8, 50, 25);
+		}
+
+		// Bottom Bar (Fixed position at bottom)
+		if (!this.bottomBar) {
+			const bottomY = window.innerHeight - 60;
+			this.bottomBar = board.add.graphics();
+			this.bottomBar.fillStyle(0x1a1a1a, 0.9);
+			this.bottomBar.fillRoundedRect(window.innerWidth * 0.05, bottomY - 30, window.innerWidth * 0.9, 60, 30);
+			this.bottomBar.lineStyle(1, 0x333333, 1);
+			this.bottomBar.strokeRoundedRect(window.innerWidth * 0.05, bottomY - 30, window.innerWidth * 0.9, 60, 30);
+
+			const btnStyle = { fontFamily: "Outfit, Arial", fontSize: "16px", color: "#aaaaaa" };
+			board.add.text(window.innerWidth * 0.2, bottomY, "↺ Undo", btnStyle).setOrigin(0.5);
+			board.add.text(window.innerWidth * 0.5, bottomY, "💬 Emote", btnStyle).setOrigin(0.5);
+			board.add.text(window.innerWidth * 0.8, bottomY, "☰ Menu", btnStyle).setOrigin(0.5);
 		}
 	}
 
